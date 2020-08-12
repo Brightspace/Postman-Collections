@@ -1,0 +1,1074 @@
+{
+	"info": {
+		"_postman_id": "4bd9cd2d-6c21-4f63-984f-a4bc720a1464",
+		"name": "Notification Settings",
+		"description": "This Colection allows the API update of Brightspace Notification Settings by a Service Account.\n\nOfficial API Documentation for this collection is available here - https://docs.valence.desire2learn.com/res/user.html#user-notifications\n\nThe Role of the user calling these routes must have the following Brightspace Permission(s):\n- Notifications -- Manage Other Users Notification Settings (API Only)\n\nStep 1 - Instantiate Collection Variables\n\nTo perform requests in this collection you need to update the following Collection Variables:\n\n- accesstoken - Your Brightspace OAuth2.0 Access Token\n- BrightspaceDomain - Your Brightspace Domain address (e.g. https://devcop.brightspace.com)\n\nStep 2 - Run SETUP\n\nRun, in sequence, the API Requests in this Collection's Setup folder.\n- Get LP Version - this request will create a new Collection Variable, named lpversion, and will set it to the most up-to-date API version for the Brightspace LP domain\n- Get SMS adn Email Carrier ID's - this request will retrieve the Brightspace Identifiers used to differentiate Notification methods. This call retrieves the Id's for SMS and Email and places them in Collection variables (SMSCarrierID & EmailCarrierID)\n\nStep 3 - Create an Input CSV file\n- This Collection takes in a Postman CSV input file, containing a list of UserNames, as input. A sample file is included in this package.\n- The CSV file contains a single column. The first row is a header row which *must* contain the word \"UserName\". Each subsequent row must contain a single Brightspace UserName that you want the Collection to process.\n\nStep 4 - Perform a Runner on the \"Update Notification Settings for a User\" folder.\n- Use your CSV file as input for the Runner",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Setup",
+			"item": [
+				{
+					"name": "Get LP Version",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6ee7136b-f2c4-4904-a9b7-df5e9b20be05",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"lpversion\", jsonData.LatestVersion);",
+									"console.log('The ' + jsonData.ProductCode + ' API Version is: ' + jsonData.LatestVersion);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "279f9e6d-0da9-4b8e-aa28-d5bc64188a2e",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/versions/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"versions",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get SMS and Email Carrier ID's",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2fcde0e8-6155-4d53-9438-342beeb335bd",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"jsonData.forEach(function(value) {",
+									"",
+									"    if (value.DisplayName == \"SMS\") {",
+									"        pm.collectionVariables.set(\"SMSCarrierID\", value.CarrierId);",
+									"    }",
+									"",
+									"    if (value.DisplayName == \"Email\") {",
+									"        pm.collectionVariables.set(\"EmailCarrierID\", value.CarrierId);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/notifications/instant/carriers/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"notifications",
+								"instant",
+								"carriers",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Update Notification Settings for a User",
+			"item": [
+				{
+					"name": "Get UserId from UserName",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3e086aee-ac7c-4ac6-ad87-e8c45dee362b",
+								"exec": [
+									"let jsonData = pm.response.json();",
+									"",
+									"pm.collectionVariables.set(\"userid\", jsonData.UserId);",
+									"",
+									"pm.test(\"Get UserId from UserName\", function() {",
+									"        pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "40e58008-cd54-4530-8674-3d8c84feb116",
+								"exec": [
+									"// Retrieve the User Name from the Iteration input CSV file",
+									"",
+									"var IterationUserName = pm.iterationData.get('UserName');",
+									"pm.collectionVariables.set(\"userName\", IterationUserName);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/users/?userName={{userName}}",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"users",
+								""
+							],
+							"query": [
+								{
+									"key": "orgDefinedId",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "userName",
+									"value": "{{userName}}"
+								},
+								{
+									"key": "externalEmail",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update a User's Notification Settings",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "58f72ecb-044f-40ae-9a03-4e5284ddd2c7",
+								"exec": [
+									"pm.test(\"Update a User's Notification Settings\", function() {",
+									"        pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"SummaryFrequency\": 1,\r\n    \"IncludeGradeValue\": true,\r\n    \"AllowFutureCoursesToSend\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/notifications/instant/users/:userid/settings",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"notifications",
+								"instant",
+								"users",
+								":userid",
+								"settings"
+							],
+							"variable": [
+								{
+									"key": "userid",
+									"value": "{{userid}}"
+								}
+							]
+						},
+						"description": "https://docs.valence.desire2learn.com/res/user.html#Notifications.UserNotificationSettingsData"
+					},
+					"response": []
+				},
+				{
+					"name": "Get List of Email Notification Settings for a User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "62fbaa10-3cfe-48ab-92ed-7b7fd45f2cf8",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"jsonData.forEach(function(value) {\r",
+									"\r",
+									"    if (value.MessageTypeDescription == \"content item created\") {\r",
+									"        pm.collectionVariables.set(\"NewContentID\", value.MessageTypeId);\r",
+									"    }\r",
+									"\r",
+									"    if (value.MessageTypeDescription == \"grade item updated\") {\r",
+									"        pm.collectionVariables.set(\"GradeItemUpdatedID\", value.MessageTypeId);\r",
+									"    }\r",
+									"\r",
+									"    if (value.MessageTypeDescription == \"grade item released\") {\r",
+									"        pm.collectionVariables.set(\"GradeItemReleasedID\", value.MessageTypeId);\r",
+									"    }\r",
+									"\r",
+									"    if (value.MessageTypeDescription == \"new item available\") {\r",
+									"        pm.collectionVariables.set(\"NewAnnouncementID\", value.MessageTypeId);\r",
+									"    }\r",
+									"\r",
+									"    if (value.MessageTypeDescription == \"new posts created by others\") {\r",
+									"        pm.collectionVariables.set(\"NewActivityFeedID\", value.MessageTypeId);\r",
+									"    }\r",
+									"\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Get Email Notification Settings for a User\", function() {\r",
+									"        pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/notifications/instant/carriers/:CarrierID/subscriptions/users/:userid/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"notifications",
+								"instant",
+								"carriers",
+								":CarrierID",
+								"subscriptions",
+								"users",
+								":userid",
+								""
+							],
+							"variable": [
+								{
+									"key": "CarrierID",
+									"value": "{{EmailCarrierID}}"
+								},
+								{
+									"key": "userid",
+									"value": "{{userid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Email Subscription for a User - Announcement New",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7ed44649-d162-471c-9ec3-0a59d4dae776",
+								"exec": [
+									"pm.test(\"Add Email Subscription for a User - Announcement New\", function() {",
+									"        pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/notifications/instant/carriers/:CarrierID/subscriptions/:MessageTypeID/users/:userid",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"notifications",
+								"instant",
+								"carriers",
+								":CarrierID",
+								"subscriptions",
+								":MessageTypeID",
+								"users",
+								":userid"
+							],
+							"variable": [
+								{
+									"key": "CarrierID",
+									"value": "{{EmailCarrierID}}"
+								},
+								{
+									"key": "MessageTypeID",
+									"value": "{{NewAnnouncementID}}"
+								},
+								{
+									"key": "userid",
+									"value": "{{userid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Email Subscription for a User - New Content Item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "66c103cf-4a0f-4f83-a5c5-82ef96f0d873",
+								"exec": [
+									"pm.test(\"Add Email Subscription for a User - New Content Item\", function() {",
+									"        pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/notifications/instant/carriers/:CarrierID/subscriptions/:MessageTypeID/users/:userid",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"notifications",
+								"instant",
+								"carriers",
+								":CarrierID",
+								"subscriptions",
+								":MessageTypeID",
+								"users",
+								":userid"
+							],
+							"variable": [
+								{
+									"key": "CarrierID",
+									"value": "{{EmailCarrierID}}"
+								},
+								{
+									"key": "MessageTypeID",
+									"value": "{{NewContentID}}"
+								},
+								{
+									"key": "userid",
+									"value": "{{userid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Email Subscription for a User - Activity Feed New Post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7392320f-cb29-4aac-9d82-bebdf3eb229d",
+								"exec": [
+									"pm.test(\"Add Email Subscription for a User - Activity Feed New Post\", function() {",
+									"        pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/notifications/instant/carriers/:CarrierID/subscriptions/:MessageTypeID/users/:userid",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"notifications",
+								"instant",
+								"carriers",
+								":CarrierID",
+								"subscriptions",
+								":MessageTypeID",
+								"users",
+								":userid"
+							],
+							"variable": [
+								{
+									"key": "CarrierID",
+									"value": "{{EmailCarrierID}}"
+								},
+								{
+									"key": "MessageTypeID",
+									"value": "{{NewActivityFeedID}}"
+								},
+								{
+									"key": "userid",
+									"value": "{{userid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Email Subscription for a User - Grade Item Updated",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "cb9af2bf-4c0a-4d56-a449-f83d78239837",
+								"exec": [
+									"pm.test(\"Add Email Subscription for a User - Grade Item Updated\", function() {",
+									"        pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/notifications/instant/carriers/:CarrierID/subscriptions/:MessageTypeID/users/:userid",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"notifications",
+								"instant",
+								"carriers",
+								":CarrierID",
+								"subscriptions",
+								":MessageTypeID",
+								"users",
+								":userid"
+							],
+							"variable": [
+								{
+									"key": "CarrierID",
+									"value": "{{EmailCarrierID}}"
+								},
+								{
+									"key": "MessageTypeID",
+									"value": "{{GradeItemUpdatedID}}"
+								},
+								{
+									"key": "userid",
+									"value": "{{userid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Email Subscription for a User - Grade Item Released",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "233f2e43-fd04-44fa-a74e-36f8f00054b7",
+								"exec": [
+									"pm.test(\"Add Email Subscription for a User - Grade Item Released\", function() {",
+									"        pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/notifications/instant/carriers/:CarrierID/subscriptions/:MessageTypeID/users/:userid",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"notifications",
+								"instant",
+								"carriers",
+								":CarrierID",
+								"subscriptions",
+								":MessageTypeID",
+								"users",
+								":userid"
+							],
+							"variable": [
+								{
+									"key": "CarrierID",
+									"value": "{{EmailCarrierID}}"
+								},
+								{
+									"key": "MessageTypeID",
+									"value": "{{GradeItemReleasedID}}"
+								},
+								{
+									"key": "userid",
+									"value": "{{userid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get List of SMS Notification Settings for a User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4ec034fe-1bac-4567-a526-228f39323078",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"jsonData.forEach(function(value) {\r",
+									"\r",
+									"    if (value.MessageTypeDescription == \"content item created\") {\r",
+									"        pm.collectionVariables.set(\"NewContentID\", value.MessageTypeId);\r",
+									"    }\r",
+									"\r",
+									"    if (value.MessageTypeDescription == \"grade item updated\") {\r",
+									"        pm.collectionVariables.set(\"GradeItemUpdatedID\", value.MessageTypeId);\r",
+									"    }\r",
+									"\r",
+									"    if (value.MessageTypeDescription == \"grade item released\") {\r",
+									"        pm.collectionVariables.set(\"GradeItemReleasedID\", value.MessageTypeId);\r",
+									"    }\r",
+									"\r",
+									"    if (value.MessageTypeDescription == \"new item available\") {\r",
+									"        pm.collectionVariables.set(\"NewAnnouncementID\", value.MessageTypeId);\r",
+									"    }\r",
+									"\r",
+									"    if (value.MessageTypeDescription == \"new posts created by others\") {\r",
+									"        pm.collectionVariables.set(\"NewActivityFeedID\", value.MessageTypeId);\r",
+									"    }\r",
+									"\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Get SMS Notification Settings for a User\", function() {\r",
+									"        pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/notifications/instant/carriers/:CarrierID/subscriptions/users/:userid/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"notifications",
+								"instant",
+								"carriers",
+								":CarrierID",
+								"subscriptions",
+								"users",
+								":userid",
+								""
+							],
+							"variable": [
+								{
+									"key": "CarrierID",
+									"value": "{{SMSCarrierID}}"
+								},
+								{
+									"key": "userid",
+									"value": "{{userid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove SMS Subscription for a User - Announcement New",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d9b11d95-ec9f-4fe0-964e-7864fd5d56c7",
+								"exec": [
+									"pm.test(\"Remove SMS Subscription for a User - Announcement New\", function() {",
+									"        pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/notifications/instant/carriers/:CarrierID/subscriptions/:MessageTypeID/users/:userid",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"notifications",
+								"instant",
+								"carriers",
+								":CarrierID",
+								"subscriptions",
+								":MessageTypeID",
+								"users",
+								":userid"
+							],
+							"variable": [
+								{
+									"key": "CarrierID",
+									"value": "{{SMSCarrierID}}"
+								},
+								{
+									"key": "MessageTypeID",
+									"value": "{{NewAnnouncementID}}"
+								},
+								{
+									"key": "userid",
+									"value": "{{userid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove SMS Subscription for a User - Activity Feed New Post",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "592733ef-3882-4e43-b58b-07c2e4ca3a7b",
+								"exec": [
+									"pm.test(\"Remove SMS Subscription for a User - Activity Feed New Post\", function() {",
+									"        pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/notifications/instant/carriers/:CarrierID/subscriptions/:MessageTypeID/users/:userid",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"notifications",
+								"instant",
+								"carriers",
+								":CarrierID",
+								"subscriptions",
+								":MessageTypeID",
+								"users",
+								":userid"
+							],
+							"variable": [
+								{
+									"key": "CarrierID",
+									"value": "{{SMSCarrierID}}"
+								},
+								{
+									"key": "MessageTypeID",
+									"value": "{{NewActivityFeedID}}"
+								},
+								{
+									"key": "userid",
+									"value": "{{userid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove SMS Subscription for a User - Grade Item Updated",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "36a37451-7718-4a9a-8b91-f664f3ffd693",
+								"exec": [
+									"pm.test(\"Remove SMS Subscription for a User - Grade Item Updated\", function() {",
+									"        pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/notifications/instant/carriers/:CarrierID/subscriptions/:MessageTypeID/users/:userid",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"notifications",
+								"instant",
+								"carriers",
+								":CarrierID",
+								"subscriptions",
+								":MessageTypeID",
+								"users",
+								":userid"
+							],
+							"variable": [
+								{
+									"key": "CarrierID",
+									"value": "{{SMSCarrierID}}"
+								},
+								{
+									"key": "MessageTypeID",
+									"value": "{{GradeItemUpdatedID}}"
+								},
+								{
+									"key": "userid",
+									"value": "{{userid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove SMS Subscription for a User - Grade Item Released",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "61b8f042-8b02-49b2-8aff-71c964d71ffd",
+								"exec": [
+									"pm.test(\"Remove SMS Subscription for a User - Grade Item Released\", function() {",
+									"        pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/notifications/instant/carriers/:CarrierID/subscriptions/:MessageTypeID/users/:userid",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"notifications",
+								"instant",
+								"carriers",
+								":CarrierID",
+								"subscriptions",
+								":MessageTypeID",
+								"users",
+								":userid"
+							],
+							"variable": [
+								{
+									"key": "CarrierID",
+									"value": "{{SMSCarrierID}}"
+								},
+								{
+									"key": "MessageTypeID",
+									"value": "{{GradeItemReleasedID}}"
+								},
+								{
+									"key": "userid",
+									"value": "{{userid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Related Routes",
+			"item": [
+				{
+					"name": "Get a User's Notification Settings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/notifications/instant/users/:userid/settings",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"notifications",
+								"instant",
+								"users",
+								":userid",
+								"settings"
+							],
+							"variable": [
+								{
+									"key": "userid",
+									"value": "{{userid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a Subscription for a User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/notifications/instant/carriers/:CarrierID/subscriptions/:NotificationTypeId/users/:userid",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"notifications",
+								"instant",
+								"carriers",
+								":CarrierID",
+								"subscriptions",
+								":NotificationTypeId",
+								"users",
+								":userid"
+							],
+							"variable": [
+								{
+									"key": "CarrierID",
+									"value": "{{EmailCarrierID}}"
+								},
+								{
+									"key": "NotificationTypeId",
+									"value": ""
+								},
+								{
+									"key": "userid",
+									"value": "{{userid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accesstoken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "b95ecc1c-cae1-4e8c-b803-3f595a973c98",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "61af6b8e-342b-483a-b4b9-609696399bfc",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "30c22ee7-4e1b-4766-97f5-af36ee7951fa",
+			"key": "accesstoken",
+			"value": ""
+		},
+		{
+			"id": "26d9f29d-737c-4fc0-88e9-538df4e4bbdd",
+			"key": "BrightspaceDomain",
+			"value": ""
+		},
+		{
+			"id": "dfa003d5-cb07-438c-b898-91dadff206a9",
+			"key": "lpversion",
+			"value": ""
+		},
+		{
+			"id": "1269d805-1620-4fc3-bfe0-b904f072d776",
+			"key": "EmailCarrierID",
+			"value": ""
+		},
+		{
+			"id": "f5832d42-b97b-4655-aae4-8050c9725aa0",
+			"key": "SMSCarrierID",
+			"value": ""
+		},
+		{
+			"id": "33335084-4f27-4a05-9a2a-7f012f9aee14",
+			"key": "GradeItemReleasedID",
+			"value": ""
+		},
+		{
+			"id": "dd874b28-cead-44f0-a59f-52c8a2707364",
+			"key": "GradeItemUpdatedID",
+			"value": ""
+		},
+		{
+			"id": "6994fcb4-dc47-4947-b3d5-ebf000e31608",
+			"key": "NewContentID",
+			"value": ""
+		},
+		{
+			"id": "85d75aef-8a65-49c4-ac05-333a5bdae51c",
+			"key": "NewActivityFeedID",
+			"value": ""
+		},
+		{
+			"id": "979134a1-a24f-4e6a-9ece-0534a78d177f",
+			"key": "NewAnnouncementID",
+			"value": ""
+		},
+		{
+			"id": "70e6f639-887b-40c9-8a94-e89f88a6ba7c",
+			"key": "userName",
+			"value": ""
+		},
+		{
+			"id": "a3f41819-9b47-4279-b149-afd67bf781d8",
+			"key": "userid",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}
