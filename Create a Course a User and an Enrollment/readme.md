@@ -3,7 +3,7 @@
 This Postman Collection provides a recipe for creating a new Course Offering, and a new Brightspace User. Lastly, it enrolls the new User into the new Course Offering.
 
 ## Documentation
-Official API Documentation for this Collection:
+#### Official API Documentation for this Collection:
 https://docs.valence.desire2learn.com/res/course.html#post--d2l-api-lp-(version)-courses-
 https://docs.valence.desire2learn.com/res/user.html#post--d2l-api-lp-(version)-users-
 https://docs.valence.desire2learn.com/res/enroll.html#post--d2l-api-lp-(version)-enrollments-
