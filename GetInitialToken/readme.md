@@ -1,13 +1,16 @@
-Get Initial Token Collection
+# Get Initial Token Collection
 
 The purpose of this collection is to provide a guide for generating an initial OAuth 2.0 Access Token and Refresh Token.
 
+## Documentation
 Official API Documentation for this collection is available here - https://docs.valence.desire2learn.com/basic/oauth2.html
 
+## Brightspace Permissions
 For this Collection your Brightspace user account will require the following Brightspace Permission(s):
 - Manage Extensibility - Can Manage Extensibility
 
-Step 1 - Register your Brightspace OAuth 2.0 Application
+## API Recipe
+#### Step 1 - Register your Brightspace OAuth 2.0 Application
 
 In order to perform Brightspace API calls you require an API App. Follow these instructions to create an OAuth 2.0 API Application:
 
@@ -15,8 +18,7 @@ https://docs.valence.desire2learn.com/basic/oauth2.html#register-your-applicatio
 
 A video example is also available in this repository (Register an OAuth2 App.mp4).
 
-
-Step 2 - Copy OAuth 2.0 Credentials to Postman
+#### Step 2 - Copy OAuth 2.0 Credentials to Postman
 
 Edit this Collection, and update the Collection Variable values with the credentials of your new OAuth 2.0 App.
 
@@ -27,8 +29,7 @@ Edit this Collection, and update the Collection Variable values with the credent
 
 It is recommended to paste your values in the "Current Value" field of each Collection Variable.
 
-
-Step 3 - Authenticate and get your Tokens.
+#### Step 3 - Authenticate and get your Tokens.
 
 1) While still Editing the Collection, select the Authorization tab.
 2) Click the "Get New Access Token" button.
