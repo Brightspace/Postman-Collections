@@ -1,0 +1,185 @@
+{
+	"info": {
+		"_postman_id": "cefe1f31-a6e7-4313-9815-1716e96611e6",
+		"name": "WhoAmI",
+		"description": "WhoAmI\r\n\r\nThe purpose of this Collection is to provide a basic introduction on how to retrieve a new OAuth 2.0 Access Token based on a valid Refresh Token. Once this is done, the collection shows how you can use the Access Token to perform the Brightspace API WhoAmI call.\r\n\r\n\r\nOfficial API Documentation for this Collection:\r\nhttps://docs.valence.desire2learn.com/basic/oauth2.html\r\nhttps://docs.valence.desire2learn.com/res/user.html?highlight=whoami#get--d2l-api-lp-(version)-users-whoami\r\n\r\nFor this Collection your Brightspace user account will require the following Brightspace Permission(s):\r\n- n/a (you just need an Access Token, Refresh Token, and a Brightspace User account)\r\n\r\nStep 1 - Populate Collection Variables\r\n\r\nEdit this Collection, and update the Collection Variable values with the credentials of your new OAuth 2.0 App.\r\n\r\n- BrightspaceDomain\r\n- accesstoken\r\n- refreshtoken\r\n- clientid\r\n- clientsecret\r\n- oauth2scope\r\n\r\nIt is recommended to paste your values in the \"Current Value\" field of each Collection Variable.\r\n\r\nNote: accesstoken and refreshtoken retrieval is explained in the \"Get Initial Token\" Collection.\r\n\r\nNote: the lpversion variable is pre-set to 1.28 in this Collection.\r\n\r\nStep 2 - Request a New Access Token and Refresh Token\r\n\r\nRun the Request a New Access Token and Refresh Token request. This request takes an existing valid Refresh Token and uses it to retrieve a new Access Token and a new Refresh Token. The Access Token can then be used to perform Brightspace API calls for the next 4,800 seconds. The new Refresh Token is then stored and used for the next time you call this request.\r\n\r\nThis Request stores the Access Token and the Refresh Token in collection varibales.\r\n\r\nStep 3 - Call Get WhoAmI\r\n\r\nRun the Request \"Get WhoAmI\". You should receive a 200 OK message with a WhoAmIUser JSON response informing you about your Brightspace User account.\r\n\r\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Request a New Access Token and Refresh Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d02fbe7c-90c2-4aaf-ac23-15abb1414a0b",
+						"exec": [
+							"if (pm.response.code == 200) {\r",
+							"    var jsonData = JSON.parse(responseBody);\r",
+							"    pm.collectionVariables.set(\"accesstoken\", jsonData.access_token);\r",
+							"    pm.collectionVariables.set(\"refreshtoken\", jsonData.refresh_token);\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "refresh_token",
+							"type": "text"
+						},
+						{
+							"key": "refresh_token",
+							"value": "{{refreshtoken}}",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{clientid}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{clientsecret}}",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": "{{oauth2scope}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://auth.brightspace.com/core/connect/token",
+					"protocol": "https",
+					"host": [
+						"auth",
+						"brightspace",
+						"com"
+					],
+					"path": [
+						"core",
+						"connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get WhoAmI",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a4a1cdda-02b6-404d-b348-6eb828ee6b90",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/users/whoami",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"lp",
+						"{{lpversion}}",
+						"users",
+						"whoami"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accesstoken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "705091c1-01a7-42e9-8f63-33d5575574b7",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "7449eefa-e46d-4548-bd63-387db89dfc94",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "4f07a054-86ad-4f6b-9230-bbacfa490662",
+			"key": "BrightspaceDomain",
+			"value": "https://devcop.brightspace.com"
+		},
+		{
+			"id": "a54764ea-b287-4cd0-a8d6-ea3232917fcf",
+			"key": "accesstoken",
+			"value": ""
+		},
+		{
+			"id": "24861282-aa9a-4a36-91db-24566b160207",
+			"key": "refreshtoken",
+			"value": ""
+		},
+		{
+			"id": "7bf12df2-b2bc-4abf-a76c-f553c0f81ed7",
+			"key": "clientid",
+			"value": ""
+		},
+		{
+			"id": "acdfaf40-8a94-44db-8083-5ce5198a905c",
+			"key": "clientsecret",
+			"value": ""
+		},
+		{
+			"id": "19235733-eeb6-4b04-a7c6-07a2df149ed1",
+			"key": "oauth2scope",
+			"value": "core:*:*"
+		},
+		{
+			"id": "8c89f0e8-02a5-4677-8b82-1ac2ee73491a",
+			"key": "lpversion",
+			"value": "1.28"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
