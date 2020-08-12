@@ -1,0 +1,201 @@
+{
+	"info": {
+		"_postman_id": "8273279d-7a3a-4404-a084-ef68913ef4fb",
+		"name": "Create a Course, a User, and an Enrollment",
+		"description": "Create a Course, a User, and an Enrollment\r\n\r\n\r\nThis Postman Collection provides a recipe for creating a new Course Offering, and a new Brightspace User. Lastly, it enrolls the new User into the new Course Offering.\r\n\r\n\r\nOfficial API Documentation for this Collection:\r\nhttps://docs.valence.desire2learn.com/res/course.html#post--d2l-api-lp-(version)-courses-\r\nhttps://docs.valence.desire2learn.com/res/user.html#post--d2l-api-lp-(version)-users-\r\nhttps://docs.valence.desire2learn.com/res/enroll.html#post--d2l-api-lp-(version)-enrollments-\r\n\r\nFor this Collection your Brightspace user account will require the following Brightspace Permission(s):\r\n- Manage Courses - Has Access to the Manage Courses tool\r\n- Manage Courses - Create Courses Offerings and Templates\r\n- Users - Create a User in the Database\r\n- Users - Enroll '{The role you plan to use}'\r\n\r\nOAuth 2.0 Scopes\r\n- ensure that your OAuth2.0 app, and access token, have the following OAuth Scopes granted:\r\ncore:*:*\r\nusers:userdata:create\r\nenrollment:orgunit:create\r\n\r\n\r\nStep 1 - Populate Collection Variables\r\n\r\nEdit this Collection, and update the Collection Variable values with appropriate values for your Brightspace site.\r\n\r\n- BrightspaceDomain\r\n- accesstoken\r\n\r\nIt is recommended to paste your values in the \"Current Value\" field of each Collection Variable.\r\n\r\nNote: accesstoken and refreshtoken retrieval is explained in the \"Get Initial Token\" Collection.\r\n\r\nNote: the lpversion variable is pre-set to 1.28 in this Collection.\r\n\r\n\r\nStep 2 - Prepare to Create a Course Offering\r\n\r\nA Brightspace Course Offering is an Org Unit which requires a Parent Course Template org unit. It does not require, but it is recommended to have, a Parent Semester org unit. This example does not require a Semester parent.\r\n\r\nDetermine the OrgUnitId of the Course Template org unit that will be the parent for your new Course Offering. Place its OrgUnitId value in the following Collection variable:\r\n- CourseTemplateId\r\n\r\nNote: The Brightspace Org Unit Editor may be required to determine the above information.\r\n\r\nNote: You should explore (and update if you want) the input JSON Body for this call. The input JSON needs to align with this documentation: https://docs.valence.desire2learn.com/res/course.html#Course.CourseOffering\r\n\r\n\r\nStep 3 - Create a New Course Offering\r\n\r\nRun the Create a Course Offering request. \r\n\r\nYou should get a 200 OK, plus a JSON block detailing your new Course Offering.\r\n\r\nThis Request stores the OrgUnitId of the new Course Offering in the CourseOfferingId collection varibale.\r\n\r\n\r\nStep 4 - Prepare to Create a New User\r\n\r\nWhen a Brightspace User is created a RoleId value is required. This RoleId value is used to enroll the new user into the Organization Org Unit.\r\n\r\nDetermine the RoleId that you want to assign to this User. Place this RoleId value in the following Collection variable:\r\n- RoleId\r\n\r\nNote: The Brightspace Roles and Permissions tool may be required to determine this value.\r\n\r\nNote: You should explore (and update if you want) the input JSON Body for this call. The input JSON needs to align with this documentation: https://docs.valence.desire2learn.com/res/user.html#User.CreateUserData\r\n\r\n\r\nStep 5 - Create a New User\r\n\r\nRun the Create a User request. \r\n\r\nYou should get a 200 OK, plus a JSON block detailing your new User.\r\n\r\nThis Request stores the UserId of the new User in the UserId collection varibale.\r\n\r\n\r\nStep 6 - Enroll your User into your Course\r\n\r\nRun the Enroll User into the Course Offering request.\r\n\r\nYou should get a 200 OK, plus a JSON response confirming the Enrollment data.\r\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create a Course Offering",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "fc79f968-05d1-4b98-87af-af66094d9d5d",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.collectionVariables.set(\"CourseOfferingId\", jsonData.Identifier);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Name\": \"Course - {{$randomPhrase}}\",\r\n    \"Code\": \"CO-{{$guid}}\",\r\n    \"Path\": \"\",\r\n    \"CourseTemplateId\": {{CourseTemplateId}},\r\n    \"SemesterId\": null,\r\n    \"StartDate\": null,\r\n    \"EndDate\": null,\r\n    \"LocaleId\": null,\r\n    \"ForceLocale\": false,\r\n    \"ShowAddressBook\": false,\r\n    \"Description\": {\r\n           \"Content\": \"This is a new Course Offering\",\r\n           \"Type\": \"Text\"\r\n        },\r\n    \"CanSelfRegister\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/courses/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"lp",
+						"{{lpversion}}",
+						"courses",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a1973cca-48a1-452d-a535-b628dd84afe7",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.collectionVariables.set(\"UserId\", jsonData.UserId);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"OrgDefinedId\": \"OrgDefinedId-{{$randomInt}}\",\r\n    \"FirstName\": \"{{$randomFirstName}}\",\r\n    \"MiddleName\": \"{{$randomFirstName}}\",\r\n    \"LastName\": \"{{$randomLastName}}\",\r\n    \"ExternalEmail\": \"{{$randomEmail}}\",\r\n    \"UserName\": \"d2l-{{$guid}}\",\r\n    \"RoleId\": {{RoleId}},\r\n    \"IsActive\": true,\r\n    \"SendCreationEmail\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/users/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"lp",
+						"{{lpversion}}",
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Enroll User into the Course Offering",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"OrgUnitId\": {{CourseOfferingId}},\r\n    \"UserId\": {{UserId}},\r\n    \"RoleId\": {{RoleId}}, \r\n    \"IsCascading\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/enrollments/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"lp",
+						"{{lpversion}}",
+						"enrollments",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accesstoken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "7f54ec9c-50ed-484d-be4d-7620f1fbe8e8",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "417e0422-0540-471a-a949-be087cee5c7d",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "9963989b-41eb-4ac4-9905-1661a8898a20",
+			"key": "accesstoken",
+			"value": ""
+		},
+		{
+			"id": "88e2033f-8f65-4b64-b688-7426149abc25",
+			"key": "BrightspaceDomain",
+			"value": "https://devcop.brightspace.com"
+		},
+		{
+			"id": "a81f4c64-5ab9-4671-9ca9-72e471bbd405",
+			"key": "lpversion",
+			"value": "1.28"
+		},
+		{
+			"id": "1322a180-78bb-4176-a4ff-6423597d41ee",
+			"key": "CourseTemplateId",
+			"value": ""
+		},
+		{
+			"id": "10b71e44-f643-4f68-b174-824258e97133",
+			"key": "CourseOfferingId",
+			"value": ""
+		},
+		{
+			"id": "1bd4ad78-30db-4152-bc48-2184367a5107",
+			"key": "RoleId",
+			"value": ""
+		},
+		{
+			"id": "fc857ed4-a5cd-430d-aca1-6f84f99566fa",
+			"key": "UserId",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}
