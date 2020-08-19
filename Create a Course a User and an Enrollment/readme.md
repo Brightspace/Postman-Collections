@@ -28,12 +28,14 @@ Edit this Collection, and update the Collection Variable values with appropriate
 
 - BrightspaceDomain
 - accesstoken
+- refreshtoken
 
 It is recommended to paste your values in the "Current Value" field of each Collection Variable.
 
-Note: accesstoken and refreshtoken retrieval is explained in the "Get Initial Token" Collection.
+Note: accesstoken and refreshtoken retrieval is explained in the "Get Initial Token" Collection. If you need to get a new Access Token then run the "Request a New Access Token and Refresh Token" request provided in this collection.
 
 Note: the lpversion variable is pre-set to 1.28 in this Collection.
+
 
 #### Step 2 - Prepare to Create a Course Offering
 
