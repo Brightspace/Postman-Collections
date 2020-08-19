@@ -15,7 +15,14 @@ The Role of the user calling these routes must have the following Brightspace Pe
 To perform requests in this collection you need to update the following Collection Variables:
 
 - accesstoken - Your Brightspace OAuth2.0 Access Token
+- refreshtoken - Your Brightspace OAuth2.0 Refresh Token
 - BrightspaceDomain - Your Brightspace Domain address (e.g. https://devcop.brightspace.com)
+
+It is recommended to paste your values in the "Current Value" field of each Collection Variable.
+
+Note: accesstoken and refreshtoken retrieval is explained in the "Get Initial Token" Collection. If you need to get a new Access Token then run the "Request a New Access Token and Refresh Token" request provided in this collection.
+
+Note: the lpversion variable is pre-set to 1.28 in this Collection.
 
 #### Step 2 - Run SETUP
 
