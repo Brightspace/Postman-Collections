@@ -2,87 +2,10 @@
 	"info": {
 		"_postman_id": "8273279d-7a3a-4404-a084-ef68913ef4fb",
 		"name": "Create a Course, a User, and an Enrollment",
-		"description": "Create a Course, a User, and an Enrollment\r\n\r\n\r\nThis Postman Collection provides a recipe for creating a new Course Offering, and a new Brightspace User. Lastly, it enrolls the new User into the new Course Offering.\r\n\r\n\r\nOfficial API Documentation for this Collection:\r\nhttps://docs.valence.desire2learn.com/res/course.html#post--d2l-api-lp-(version)-courses-\r\nhttps://docs.valence.desire2learn.com/res/user.html#post--d2l-api-lp-(version)-users-\r\nhttps://docs.valence.desire2learn.com/res/enroll.html#post--d2l-api-lp-(version)-enrollments-\r\n\r\nFor this Collection your Brightspace user account will require the following Brightspace Permission(s):\r\n- Manage Courses - Has Access to the Manage Courses tool\r\n- Manage Courses - Create Courses Offerings and Templates\r\n- Users - Create a User in the Database\r\n- Users - Enroll '{The role you plan to use}'\r\n\r\nOAuth 2.0 Scopes\r\n- ensure that your OAuth2.0 app, and access token, have the following OAuth Scopes granted:\r\ncore:*:*\r\nusers:userdata:create\r\nenrollment:orgunit:create\r\n\r\n\r\nStep 1 - Populate Collection Variables\r\n\r\nEdit this Collection, and update the Collection Variable values with appropriate values for your Brightspace site.\r\n\r\n- BrightspaceDomain\r\n- accesstoken\r\n- refreshtoken\r\n\r\nIt is recommended to paste your values in the \"Current Value\" field of each Collection Variable.\r\n\r\nNote: accesstoken and refreshtoken retrieval is explained in the \"Get Initial Token\" Collection. If you need to get a new Access Token then run the \"Request a New Access Token and Refresh Token\" request provided in this collection.\r\n\r\nNote: the lpversion variable is pre-set to 1.28 in this Collection.\r\n\r\n\r\nStep 2 - Prepare to Create a Course Offering\r\n\r\nA Brightspace Course Offering is an Org Unit which requires a Parent Course Template org unit. It does not require, but it is recommended to have, a Parent Semester org unit. This example does not require a Semester parent.\r\n\r\nDetermine the OrgUnitId of the Course Template org unit that will be the parent for your new Course Offering. Place its OrgUnitId value in the following Collection variable:\r\n- CourseTemplateId\r\n\r\nNote: The Brightspace Org Unit Editor may be required to determine the above information.\r\n\r\nNote: You should explore (and update if you want) the input JSON Body for this call. The input JSON needs to align with this documentation: https://docs.valence.desire2learn.com/res/course.html#Course.CourseOffering\r\n\r\n\r\nStep 3 - Create a New Course Offering\r\n\r\nRun the Create a Course Offering request. \r\n\r\nYou should get a 200 OK, plus a JSON block detailing your new Course Offering.\r\n\r\nThis Request stores the OrgUnitId of the new Course Offering in the CourseOfferingId collection varibale.\r\n\r\n\r\nStep 4 - Prepare to Create a New User\r\n\r\nWhen a Brightspace User is created a RoleId value is required. This RoleId value is used to enroll the new user into the Organization Org Unit.\r\n\r\nDetermine the RoleId that you want to assign to this User. Place this RoleId value in the following Collection variable:\r\n- RoleId\r\n\r\nNote: The Brightspace Roles and Permissions tool may be required to determine this value.\r\n\r\nNote: You should explore (and update if you want) the input JSON Body for this call. The input JSON needs to align with this documentation: https://docs.valence.desire2learn.com/res/user.html#User.CreateUserData\r\n\r\n\r\nStep 5 - Create a New User\r\n\r\nRun the Create a User request. \r\n\r\nYou should get a 200 OK, plus a JSON block detailing your new User.\r\n\r\nThis Request stores the UserId of the new User in the UserId collection varibale.\r\n\r\n\r\nStep 6 - Enroll your User into your Course\r\n\r\nRun the Enroll User into the Course Offering request.\r\n\r\nYou should get a 200 OK, plus a JSON response confirming the Enrollment data.\r\n",
+		"description": "# Create a Course, a User, and an Enrollment\r\n\r\nThis Postman Collection provides a recipe for creating a new Course Offering, and a new Brightspace User. Lastly, it enrolls the new User into the new Course Offering.\r\n\r\n## Documentation\r\n#### Official API Documentation for this Collection:\r\nhttps://docs.valence.desire2learn.com/res/course.html#post--d2l-api-lp-(version)-courses-\r\nhttps://docs.valence.desire2learn.com/res/user.html#post--d2l-api-lp-(version)-users-\r\nhttps://docs.valence.desire2learn.com/res/enroll.html#post--d2l-api-lp-(version)-enrollments-\r\n\r\n## Permissions\r\nFor this Collection your Brightspace user account will require the following Brightspace Permission(s):\r\n- Manage Courses - Has Access to the Manage Courses tool\r\n- Manage Courses - Create Courses Offerings and Templates\r\n- Users - Create a User in the Database\r\n- Users - Enroll '{The role you plan to use}'\r\n\r\n## OAuth 2.0 Scopes\r\n- ensure that your OAuth2.0 app, and access token, have the following OAuth Scopes granted:\r\ncore:*:*\r\nusers:userdata:create\r\nenrollment:orgunit:create\r\n\r\n## API Recipe\r\n#### Step 1 - Populate Collection Variables\r\n\r\nEdit this Collection, and update the Collection Variable values with appropriate values for your Brightspace site.\r\n\r\n- BrightspaceDomain\r\n- accesstoken\r\n\r\nIt is recommended to paste your values in the \"Current Value\" field of each Collection Variable.\r\n\r\nNote: accesstoken and refreshtoken retrieval is explained in the \"Get Initial Token\" and \"WhoAmI\" Collections.\r\n\r\nNote: the lpversion variable is pre-set to 1.28 in this Collection.\r\n\r\n\r\n#### Step 2 - Prepare to Create a Course Offering\r\n\r\nA Brightspace Course Offering is an Org Unit which requires a Parent Course Template org unit. It does not require, but it is recommended to have, a Parent Semester org unit. This example does not require a Semester parent.\r\n\r\nDetermine the OrgUnitId of the Course Template org unit that will be the parent for your new Course Offering. Place its OrgUnitId value in the following Collection variable:\r\n- CourseTemplateId\r\n\r\nNote: The Brightspace Org Unit Editor may be required to determine the above information.\r\n\r\nNote: You should explore (and update if you want) the input JSON Body for this call. The input JSON needs to align with this documentation: https://docs.valence.desire2learn.com/res/course.html#Course.CourseOffering\r\n\r\n#### Step 3 - Create a New Course Offering\r\n\r\nRun the Create a Course Offering request. \r\n\r\nYou should get a 200 OK, plus a JSON block detailing your new Course Offering.\r\n\r\nThis Request stores the OrgUnitId of the new Course Offering in the CourseOfferingId collection varibale.\r\n\r\n#### Step 4 - Prepare to Create a New User\r\n\r\nWhen a Brightspace User is created a RoleId value is required. This RoleId value is used to enroll the new user into the Organization Org Unit.\r\n\r\nDetermine the RoleId that you want to assign to this User. Place this RoleId value in the following Collection variable:\r\n- RoleId\r\n\r\nNote: The Brightspace Roles and Permissions tool may be required to determine this value.\r\n\r\nNote: You should explore (and update if you want) the input JSON Body for this call. The input JSON needs to align with this documentation: https://docs.valence.desire2learn.com/res/user.html#User.CreateUserData\r\n\r\n#### Step 5 - Create a New User\r\n\r\nRun the Create a User request. \r\n\r\nYou should get a 200 OK, plus a JSON block detailing your new User.\r\n\r\nThis Request stores the UserId of the new User in the UserId collection varibale.\r\n\r\n#### Step 6 - Enroll your User into your Course\r\n\r\nRun the Enroll User into the Course Offering request.\r\n\r\nYou should get a 200 OK, plus a JSON response confirming the Enrollment data.\r\n",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
-		{
-			"name": "Request a New Access Token and Refresh Token",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "2f883fb6-7c40-433a-bf92-6d2499922ce9",
-						"exec": [
-							"if (pm.response.code == 200) {\r",
-							"    var jsonData = JSON.parse(responseBody);\r",
-							"\r",
-							"    // Use these two calls if you are using Collection Variables\r",
-							"    pm.collectionVariables.set(\"accesstoken\", jsonData.access_token);\r",
-							"    pm.collectionVariables.set(\"refreshtoken\", jsonData.refresh_token);\r",
-							"\r",
-							"//    Use these two calls if you are using Environment Variables\r",
-							"//    postman.setEnvironmentVariable(\"accesstoken\", jsonData.access_token);\r",
-							"//    postman.setEnvironmentVariable(\"refreshtoken\", jsonData.refresh_token);\r",
-							"}"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "grant_type",
-							"value": "refresh_token",
-							"type": "text"
-						},
-						{
-							"key": "refresh_token",
-							"value": "{{refreshtoken}}",
-							"type": "text"
-						},
-						{
-							"key": "client_id",
-							"value": "{{clientid}}",
-							"type": "text"
-						},
-						{
-							"key": "client_secret",
-							"value": "{{clientsecret}}",
-							"type": "text"
-						},
-						{
-							"key": "scope",
-							"value": "{{oauth2scope}}",
-							"type": "text"
-						}
-					]
-				},
-				"url": {
-					"raw": "https://auth.brightspace.com/core/connect/token",
-					"protocol": "https",
-					"host": [
-						"auth",
-						"brightspace",
-						"com"
-					],
-					"path": [
-						"core",
-						"connect",
-						"token"
-					]
-				}
-			},
-			"response": []
-		},
 		{
 			"name": "Create a Course Offering",
 			"event": [
@@ -239,42 +162,37 @@
 	],
 	"variable": [
 		{
-			"id": "cbccece2-d8c2-4111-aee9-af6bb05daeb2",
+			"id": "4ab53824-c6b6-4bfd-a318-94bcc3aff95f",
 			"key": "accesstoken",
 			"value": ""
 		},
 		{
-			"id": "bc1b8796-0a50-4df7-80b9-d1f87107cab1",
-			"key": "refreshtoken",
-			"value": ""
-		},
-		{
-			"id": "4eacd773-8caf-42db-aa35-70bdda8e63ca",
+			"id": "844016d4-bcc3-4265-b466-98e8e53c1114",
 			"key": "BrightspaceDomain",
 			"value": "https://devcop.brightspace.com"
 		},
 		{
-			"id": "91c11b49-69cd-4e4a-acb5-25eff4ef23cc",
+			"id": "45b8e790-b30f-497e-97b4-710fb3c6939c",
 			"key": "lpversion",
 			"value": "1.28"
 		},
 		{
-			"id": "6905cf04-5c04-43f8-8f13-6e7fead34692",
+			"id": "f0d68943-9948-4f8b-b02f-d52c450d7023",
 			"key": "CourseTemplateId",
 			"value": ""
 		},
 		{
-			"id": "1fbf8a68-a581-4aeb-8ba4-42cac6fdefc9",
+			"id": "0986107e-b888-4104-a28f-4e3869e587bb",
 			"key": "CourseOfferingId",
 			"value": ""
 		},
 		{
-			"id": "6f513bc9-db04-484b-bafd-3f2ca0e81fcc",
+			"id": "21b30bd5-da57-4373-856d-73821e531bc8",
 			"key": "RoleId",
 			"value": ""
 		},
 		{
-			"id": "af8a8312-67bf-4c54-a498-2aa044d0e7c5",
+			"id": "9b6d80ee-45bc-474d-aa5c-18b8a884f36e",
 			"key": "UserId",
 			"value": ""
 		}

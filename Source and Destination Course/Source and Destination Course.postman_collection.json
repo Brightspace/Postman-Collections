@@ -1,0 +1,508 @@
+{
+	"info": {
+		"_postman_id": "80cb05c3-b318-4d09-980a-d55fb82e76a0",
+		"name": "Source and Destination Course",
+		"description": "# Source and Destination Course\r\n\r\nThis Collection takes a Course Template as input. It then shows how to create \"Source\" course and \"Destination\" course children for the provided course template. Lastly, it initiates a Course Copy process to copy the components from the Source to the Destination.\r\n\r\n## Official API Documentation for this Collection:\r\nhttps://docs.valence.desire2learn.com/res/orgunit.html#structure\r\nhttps://docs.valence.desire2learn.com/res/course.html#post--d2l-api-lp-(version)-courses-\r\nhttps://docs.valence.desire2learn.com/res/course.html#post--d2l-api-le-(version)-import-(orgUnitId)-copy-\r\n\r\nFor this Collection your Brightspace user account will require the following Brightspace Permission(s):\r\n- Org Unit Editor - Has Access to the Manage Courses tool\r\n- Manage Courses - Create Courses Offerings and Templates\r\n- Import/Export/Copy Components - Copy Course Offering and Template Components\r\n  - The calling user must be enrolled in both the Source and the Destination course.\r\n\r\n#### OAuth 2.0 Scopes\r\n- ensure that your OAuth2.0 app, and access token, have the following OAuth Scopes granted:\r\norganizations:organization:read\r\norgunits:course:create\r\ncore:*:*\r\n\r\n## API Recipe\r\n\r\n#### Step 1 - Populate Collection Variables\r\n\r\nEdit this Collection, and update the Collection Variable values with appropriate values for your Brightspace site.\r\n\r\n- accesstoken - Your Brightspace OAuth2.0 Access Token\r\n- BrightspaceDomain - Your Brightspace Domain address (e.g. https://devcop.brightspace.com)\r\n\r\n- templatecode - the OrgUnitCode value for your Course Template\r\n- semestercode - the OrgUnitCode value for your Semester (if you don't have one then enter NULL)\r\n\r\nIt is recommended to paste your values in the \"Current Value\" field of each Collection Variable.\r\n\r\nNote: accesstoken and refreshtoken retrieval is explained in the \"Get Initial Token\" and \"WhoAmI\" Collections. \r\nNote: the lpversion variable is pre-set to 1.28 in this Collection.\r\nNote: the leversion variable is pre-set to 1.46 in this Collection.\r\n\r\n#### Step 2 - Get the Template and Semester OrgUnitId values\r\n\r\nThe Brightspace API typically relies on Id values. The assumption made in this recipe is that the OrgUnitCode values are known. The following calls allow you to get an OrgUnitId value from an OrgUnitCode value.\r\n\r\nCall \"Locate your Course Template by OrgUnitCode\" to populate the templateid value.\r\n\r\nCall \"Locate your Semester by OrgUnitCode\" to populate the semesterid value.\r\n\r\n#### Step 3 - Create the Course Offerings\r\n\r\nRun the \"Create a Source Course Offering\"\r\nRun the \"Create a Destination Course Offering\"\r\n\r\n#### Step 4 - Perform the Copy Process\r\n\r\nRun the \"Copy Content from Source to Destination\"\r\n\r\nThis call, when successful, will return a Job Token value. The Copy process is a back-end service which, depending on the amount of content in the Source, may take some time. \r\n\r\nThe returned Job Token can be used to check the status of the Copy. Check the Related Routes folder.\r\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Setup",
+			"item": [
+				{
+					"name": "Get LP Version",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6df76f91-209e-4e1d-811f-6f03eacf8864",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"lpversion\", jsonData.LatestVersion);",
+									"console.log('The ' + jsonData.ProductCode + ' API Version is: ' + jsonData.LatestVersion);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "adbad4a6-fb5b-4ec4-878d-57902522474a",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/versions/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"versions",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get LE Version",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c9c565d4-f886-4656-822b-6cf7f1c5d8af",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"leversion\", jsonData.LatestVersion);",
+									"console.log('The ' + jsonData.ProductCode + ' API Version is: ' + jsonData.LatestVersion);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "0753c37a-2643-4337-8808-e7359a523969",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/versions/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"versions",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Related Routes",
+			"item": [
+				{
+					"name": "Check Copy Job Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/import/{{destinationid}}/copy/{{jobtoken}}",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"{{leversion}}",
+								"import",
+								"{{destinationid}}",
+								"copy",
+								"{{jobtoken}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Review Copy Course Logs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/unstable/ccb/logs?sourceOrgUnitId ={{sourcecourseid}}&destinationOrgUnitId ={{destinationid}}",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"unstable",
+								"ccb",
+								"logs"
+							],
+							"query": [
+								{
+									"key": "sourceOrgUnitId ",
+									"value": "{{sourcecourseid}}"
+								},
+								{
+									"key": "destinationOrgUnitId ",
+									"value": "{{destinationid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Locate your Course Template by OrgUnitCode",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "fdfb1d8a-704a-44b5-b78d-c93447b4454a",
+						"exec": [
+							"if (pm.response.code == 200) {",
+							"    var jsonData = JSON.parse(responseBody);",
+							"    pm.collectionVariables.set(\"templateid\", jsonData.Items[0].Identifier);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/orgstructure/?exactOrgUnitCode={{templatecode}}",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"lp",
+						"{{lpversion}}",
+						"orgstructure",
+						""
+					],
+					"query": [
+						{
+							"key": "exactOrgUnitCode",
+							"value": "{{templatecode}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Locate your Semester by OrgUnitCode",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e77161c4-91b4-4c32-a954-75fff8490de5",
+						"exec": [
+							"if (pm.response.code == 200) {",
+							"    var jsonData = JSON.parse(responseBody);",
+							"    pm.collectionVariables.set(\"semesterid\", jsonData.Items[0].Identifier);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/orgstructure/?exactOrgUnitCode={{semestercode}}",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"lp",
+						"{{lpversion}}",
+						"orgstructure",
+						""
+					],
+					"query": [
+						{
+							"key": "exactOrgUnitCode",
+							"value": "{{semestercode}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a Source Course Offering",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c783e8da-de1b-4203-a76f-8e4f938febde",
+						"exec": [
+							"if (pm.response.code == 200) {",
+							"    var jsonData = JSON.parse(responseBody);",
+							"    pm.collectionVariables.set(\"sourcecourseid\", jsonData.Identifier);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Name\": \"Source Course - {{$guid}}\",\r\n    \"Code\": \"SourceCourse-{{$guid}}\",\r\n    \"Path\": \"\",\r\n    \"CourseTemplateId\": {{templateid}},\r\n    \"SemesterId\": {{semesterid}},\r\n    \"StartDate\": null,\r\n    \"EndDate\": null,\r\n    \"LocaleId\": null,\r\n    \"ForceLocale\": false,\r\n    \"ShowAddressBook\": false,\r\n    \"Description\": {\r\n       \"Content\": \"Source Course - {{$randomLoremParagraph}}\",\r\n       \"Type\": \"Text\"\r\n    },  \r\n    \"CanSelfRegister\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/courses/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"lp",
+						"{{lpversion}}",
+						"courses",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a Destination Course Offering",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "05d4be13-caa0-4c4f-9ee0-a1c31df4a8ae",
+						"exec": [
+							"if (pm.response.code == 200) {",
+							"    var jsonData = JSON.parse(responseBody);",
+							"    pm.collectionVariables.set(\"destinationid\", jsonData.Identifier);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Name\": \"Destination Course - {{$guid}}\",\r\n    \"Code\": \"Destination-{{$guid}}\",\r\n    \"Path\": \"\",\r\n    \"CourseTemplateId\": {{templateid}},\r\n    \"SemesterId\": {{semesterid}},\r\n    \"StartDate\": null,\r\n    \"EndDate\": null,\r\n    \"LocaleId\": null,\r\n    \"ForceLocale\": false,\r\n    \"ShowAddressBook\": false,\r\n    \"Description\": {\r\n       \"Content\": \"Destination Course - {{$randomLoremParagraph}}\",\r\n       \"Type\": \"Text\"\r\n    },  \r\n    \"CanSelfRegister\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/courses/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"lp",
+						"{{lpversion}}",
+						"courses",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Copy Content from Source to Destination",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b49119ed-7f0e-41fd-876b-8fce765745cf",
+						"exec": [
+							"if (pm.response.code == 200) {",
+							"    let jsonData = pm.response.json();",
+							"    pm.collectionVariables.set(\"jobtoken\", jsonData.JobToken);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"SourceOrgUnitId\": {{sourcecourseid}},\r\n    \"Components\": [ \"Checklists\", \"Content\", \"CourseFiles\", \"Dropbox\", \"Grades\", \"Quizzes\", \"Rubrics\" ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/import/{{destinationid}}/copy/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"import",
+						"{{destinationid}}",
+						"copy",
+						""
+					]
+				},
+				"description": "Make sure to review the Body in this Request. Note that, by default, only certain components are included in the copy. To include ALL components change the Body to this:\r\n\r\n{\r\n    \"SourceOrgUnitId\": {{sourcecourseid}}\r\n}"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accesstoken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "3ce084fe-8322-4cb4-8259-8ec0cccc43d4",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "181dae7f-6d11-4307-a890-521ae13cabd9",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "d281a072-570b-42ec-9585-3f27d8e8f558",
+			"key": "accesstoken",
+			"value": ""
+		},
+		{
+			"id": "db44ce2d-f45b-4e3d-a8ad-f66c0dad2f6d",
+			"key": "BrightspaceDomain",
+			"value": "https://devcop.brightspace.com"
+		},
+		{
+			"id": "92f4a1d0-7e42-475a-aa00-69f6960c82d6",
+			"key": "lpversion",
+			"value": "1.28"
+		},
+		{
+			"id": "9bb34070-5649-4e0c-b041-e423448d2cd6",
+			"key": "leversion",
+			"value": "1.46"
+		},
+		{
+			"id": "523581fe-569a-4eef-bd0b-e148c8b326e8",
+			"key": "templatecode",
+			"value": ""
+		},
+		{
+			"id": "664eb204-93be-4927-9214-d6ecb864d14a",
+			"key": "semestercode",
+			"value": ""
+		},
+		{
+			"id": "cea4ba7a-fc5a-4606-92ae-aa925309cbb9",
+			"key": "templateid",
+			"value": ""
+		},
+		{
+			"id": "6e2d26e2-04d2-4a8f-9c83-6246cbd5af46",
+			"key": "semesterid",
+			"value": ""
+		},
+		{
+			"id": "b488cb1a-3cdb-4337-a18a-1dbdd218ed57",
+			"key": "sourcecourseid",
+			"value": ""
+		},
+		{
+			"id": "c0a36654-a64b-4710-b304-85bdaaf7d980",
+			"key": "destinationid",
+			"value": ""
+		},
+		{
+			"id": "b4a54e1f-0156-4bbb-86dd-1659a07727df",
+			"key": "jobtoken",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}
