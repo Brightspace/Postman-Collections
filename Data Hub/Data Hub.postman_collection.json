@@ -1,0 +1,577 @@
+{
+	"info": {
+		"_postman_id": "61935c4a-2be0-4d92-b995-95bc259537d8",
+		"name": "Data Hub",
+		"description": "# Data Hub\r\n\r\nThis Postman Collection outlines two key API routes which allow for the discovery and download of Brightspace Data Sets.\r\n\r\n## Documentation\r\nhttps://docs.valence.desire2learn.com/res/dataExport.html\r\n\r\n## Permissions\r\nFor this Collection your Brightspace user account will require the following Brightspace Permission(s):\r\n- Brightspace Data Sets - Can access Brightspace Data Sets\r\n\r\n## OAuth 2.0 Scopes\r\n- ensure that your OAuth2.0 app, and access token, have the following OAuth Scopes granted:\r\ndatahub:dataexports:download\r\ndatahub:dataexports:read\r\n\r\n## API Recipe\r\n\r\n#### Step 1 - Populate Collection Variables\r\n\r\nEdit this Collection, and update the Collection Variable values with appropriate values for your Brightspace site.\r\n\r\n- BrightspaceDomain\r\n- accesstoken\r\n\r\nIt is recommended to paste your values in the \"Current Value\" field of each Collection Variable.\r\n\r\nNote: accesstoken and refreshtoken retrieval is explained in the \"Get Initial Token\" and \"WhoAmI\" Collections.\r\n\r\nNote: the lpversion variable is pre-set to 1.28 in this Collection.\r\n\r\n#### Step 2 - Get your List of Data Sets\r\n\r\nRun the Request \"Get List of Data Set Plugins\".\r\n\r\nThis request returns the list of Brightspace Data Sets that are enabled within your Brightspace's Data Hub.\r\n\r\nThis request contains JavaScript code in its Tests. This code scans through the list of data sets and grabs the PluginId values for specific data sets as defined in the code. The script stores plugin values for the following Data Sets:\r\n- Organizational Units\r\n- Users\r\n- User Enrollments\r\n- Organizational Units Differential\r\n- Users Differential\r\n- User Enrollments Differential\r\n\r\nThis script can be customize by adding your own \"case\" statement for each Data Set you want to download.\r\n\r\ncase \"{Name of the Data Set}\":\r\n\tpm.collectionVariables.set(\"{YourVariableName}\", Item.PluginId);\r\n\tbreak;\r\n\r\n#### Step 3 - Download your Data Sets\r\n\r\nRun, in sequence, the remaining Requests. Note that there is one Request per Data Set Plugin defined in the Tests code from the previous step.\r\n\r\nThese requests return a File Stream of a zip file containing a Data Set. The easiest way to download this zip file is to NOT click the Postman Send button, but rather to click the down arrow beside the word \"Send\" and to instead select \"Send and Download\".",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Brightspace Data Sets",
+			"item": [
+				{
+					"name": "Get List of Data Set Plugins",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "004103a1-95dc-4b30-9035-7199f6f54d38",
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"jsonData.forEach(Item => {\r",
+									"    switch(Item.Name) {\r",
+									"        case \"Organizational Units\":\r",
+									"            pm.collectionVariables.set(\"OrgUnitsId\", Item.PluginId);\r",
+									"            break;\r",
+									"        case \"Organizational Units Differential\":\r",
+									"            pm.collectionVariables.set(\"OrgUnitsDiffId\", Item.PluginId);\r",
+									"            break;       \r",
+									"        case \"Users\":\r",
+									"            pm.collectionVariables.set(\"UsersId\", Item.PluginId);\r",
+									"            break;       \r",
+									"        case \"Users Differential\":\r",
+									"            pm.collectionVariables.set(\"UsersDiffId\", Item.PluginId);\r",
+									"            break;\r",
+									"        case \"User Enrollments\":\r",
+									"            pm.collectionVariables.set(\"UsersEnrollmentsId\", Item.PluginId);\r",
+									"            break;       \r",
+									"        case \"User Enrollments Differential\":\r",
+									"            pm.collectionVariables.set(\"UsersEnrollmentsDiffId\", Item.PluginId);\r",
+									"            break;       \r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/dataExport/bds/list",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"dataExport",
+								"bds",
+								"list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download Organizational Units Full Data Set",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "38f9863f-eeb1-4fb5-b0e6-d4d940b8169f",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/dataExport/bds/download/{{OrgUnitsId}}",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"dataExport",
+								"bds",
+								"download",
+								"{{OrgUnitsId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download Organizational Units Differential Data Set",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5b2d5567-5406-4cee-b681-46bf7342e313",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/dataExport/bds/download/{{OrgUnitsDiffId}}",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"dataExport",
+								"bds",
+								"download",
+								"{{OrgUnitsDiffId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download Users Full Data Set",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3bf67155-6a80-4fb8-8da5-e0be6b4b023a",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/dataExport/bds/download/{{UsersId}}",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"dataExport",
+								"bds",
+								"download",
+								"{{UsersId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download Users Differential Data Set",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d1098d6f-04f2-4909-9386-038d9b2e0172",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/dataExport/bds/download/{{UsersDiffId}}",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"dataExport",
+								"bds",
+								"download",
+								"{{UsersDiffId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download User Enrollments Full Data Set",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "605acc55-9966-4244-ae3f-370cb793e2f8",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/dataExport/bds/download/{{UsersEnrollmentsId}}",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"dataExport",
+								"bds",
+								"download",
+								"{{UsersEnrollmentsId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download User Enrollments Differential Data Set",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2112c67c-a3f9-4e8a-8815-1df9e78162ce",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/dataExport/bds/download/{{UsersEnrollmentsDiffId}}",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"dataExport",
+								"bds",
+								"download",
+								"{{UsersEnrollmentsDiffId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Related Routes",
+			"item": [
+				{
+					"name": "Advanced Data Sets",
+					"item": [
+						{
+							"name": "Get List of Available Advanced Data Sets",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5cf9b98d-036e-4b9d-aebc-df9bec2c843b",
+										"exec": [
+											"let jsonData = pm.response.json();\r",
+											"\r",
+											"jsonData.forEach(Item => {\r",
+											"    switch(Item.Name) {\r",
+											"        case \"Enrollments and Withdrawals\":\r",
+											"            pm.collectionVariables.set(\"EandWId\", Item.DataSetId);\r",
+											"            break;\r",
+											"        case \"Final Grades\":\r",
+											"            pm.collectionVariables.set(\"FinalGradesId\", Item.DataSetId);\r",
+											"            break;       \r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/dataExport/list",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"lp",
+										"{{lpversion}}",
+										"dataExport",
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Retrieve Enrollments and Withdrawals Advanced Data Set Definition",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/dataExport/list/{{EandWId}}",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"lp",
+										"{{lpversion}}",
+										"dataExport",
+										"list",
+										"{{EandWId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Request Enrollments and Withdrawls Export",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "100c5d68-ea36-45bc-8875-6fc8c5f08d73",
+										"exec": [
+											"let jsonData = pm.response.json();\r",
+											"pm.collectionVariables.set(\"EandWExportJobId\", jsonData.ExportJobId);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"DataSetId\": \"{{EandWId}}\",\r\n    \"Filters\": [\r\n        {\r\n            \"Name\": \"startDate\",\r\n            \"Value\": \"2016-02-24\"\r\n        },\r\n        {\r\n            \"Name\": \"endDate\",\r\n            \"Value\": \"2020-08-20T02:35:55.207Z\"\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/dataExport/create",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"lp",
+										"{{lpversion}}",
+										"dataExport",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "View list of available export Jobs",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/dataExport/jobs",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"lp",
+										"{{lpversion}}",
+										"dataExport",
+										"jobs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Download Exports and Withdrawls Advanced Data Set",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/dataExport/download/{{EandWExportJobId}}",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"lp",
+										"{{lpversion}}",
+										"dataExport",
+										"download",
+										"{{EandWExportJobId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Get List of Data Set Plugins Paged",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/dataExport/bds",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"dataExport",
+								"bds"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accesstoken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "90d5899a-56e1-4ef3-8c73-bcbe92753681",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "93080362-8225-4452-9b0a-fba200027800",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "0e962b9b-445e-47df-bc19-a9dbdcafa04b",
+			"key": "BrightspaceDomain",
+			"value": "https://devcop.brightspace.com"
+		},
+		{
+			"id": "49cb5b6e-aea2-4693-a9bf-3ccfd4b9990c",
+			"key": "accesstoken",
+			"value": ""
+		},
+		{
+			"id": "79d99a91-a680-47e2-b4eb-455b02248bc0",
+			"key": "lpversion",
+			"value": "1.28"
+		},
+		{
+			"id": "81cb61d6-64d5-46ea-bffb-f4143b5c5003",
+			"key": "EandWId",
+			"value": ""
+		},
+		{
+			"id": "f8975b81-c598-45a6-85da-f3a83e7c96e5",
+			"key": "FinalGradesId",
+			"value": ""
+		},
+		{
+			"id": "1f2fbd17-4e2a-44eb-ac91-fa5efe2ab705",
+			"key": "EandWExportJobId",
+			"value": ""
+		},
+		{
+			"id": "76425d8c-ba17-4c60-a358-c6c809c3e7e6",
+			"key": "OrgUnitsDiffId",
+			"value": ""
+		},
+		{
+			"id": "043ba2d7-8270-4770-a7ab-28b4c6ef5fed",
+			"key": "OrgUnitsId",
+			"value": ""
+		},
+		{
+			"id": "575ece17-243f-4482-9f14-2d30ee5099ef",
+			"key": "UsersDiffId",
+			"value": ""
+		},
+		{
+			"id": "fa652fe5-2a3f-435c-8b55-3650c9ec1f4f",
+			"key": "UsersEnrollmentsDiffId",
+			"value": ""
+		},
+		{
+			"id": "ed4ea00b-b33b-4fda-8e0b-63127841e195",
+			"key": "UsersEnrollmentsId",
+			"value": ""
+		},
+		{
+			"id": "3b247837-06ea-4171-9389-7f5ea073fbdf",
+			"key": "UsersId",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}
