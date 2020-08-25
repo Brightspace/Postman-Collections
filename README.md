@@ -8,7 +8,7 @@ If you are new to the Brightspace API then we recommend you start with these two
 
 The purpose of this collection is to provide a guide for generating an initial OAuth 2.0 Access Token and Refresh Token.
 
-1. WhoAmI - https://github.com/Brightspace/Postman-Collections/tree/master/WhoAmI
+2. WhoAmI - https://github.com/Brightspace/Postman-Collections/tree/master/WhoAmI
 
 The purpose of this Collection is to provide a basic introduction on how to retrieve a new OAuth 2.0 Access Token based on a valid Refresh Token. Once this is done, the collection shows how you can use the Access Token to perform the Brightspace API WhoAmI call.
 
