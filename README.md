@@ -46,6 +46,7 @@ This Collection allows the API update of Brightspace Notification Settings by a 
 # More Information
 
 Brightspace API Documentation - https://docs.valence.desire2learn.com/
+
 Brightspace Community Developer Group - https://community.brightspace.com/s/group/0F9610000001mZ1CAI/developers
 
 # Participate
