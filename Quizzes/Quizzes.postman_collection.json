@@ -1,0 +1,389 @@
+{
+	"info": {
+		"_postman_id": "547e3236-240b-468f-8f2d-e872d148f7c5",
+		"name": "Quizzes",
+		"description": "# Quizzes\r\n\r\nThis collection is not an API recipe. The Quizzes Collection provides examples of some of the most commonly used Quiz API routes.\r\n\r\n## Documentation\r\nhttps://docs.valence.desire2learn.com/res/quiz.html\r\n\r\n## Permissions\r\nFor this Collection your Brightspace user account will require the following Brightspace Permission(s):\r\n- Quizzes\r\n  - View Quizzes\r\n  - Create Quizzes\r\n  - Edit Quiz Properties\r\n  - Add Special Access\r\n\r\n## OAuth 2.0 Scopes\r\n- ensure that your OAuth2.0 app, and access token, have the following OAuth Scopes granted:\r\ncore:*:*\r\nquizzing:quizzes:read\r\nquizzing:access:read\r\nquizzing:quizzes:create\r\nquizzing:quizzes:write\r\nquizzing:attempts:read\r\n\r\n## Step 1 - Populate Collection Variables\r\n\r\nEdit this Collection, and update the Collection Variable values with appropriate values for your Brightspace site.\r\n\r\n- BrightspaceDomain\r\n- accesstoken\r\n- courseid - the orgunitid value of the course offering your quizzes are in\r\n- learnerid - the userid value of the user you will provide \"Special Access\" to\r\n\r\nIt is recommended to paste your values in the \"Current Value\" field of each Collection Variable.\r\n\r\nNote: accesstoken and refreshtoken retrieval is explained in the \"Get Initial Token\" and \"WhoAmI\" Collections.\r\n\r\nNote: the leversion variable is pre-set to 1.48 in this Collection. The Special Access API routes require version 1.48+.\r\n\r\n## Step 2 - Run the Requests in the Collection\r\n\r\nThis collection is not a recipe. It provides examples of some of the most commonly used Quiz API routes.\r\n\r\nNote that the terms \"Access\" and \"Special Access\" are not refering to the same Brightspace concept. The \"See which Users have Access to a Quiz\" request informs us of which users will be able to gain access to the provided quiz. The \"See who has Special Access to the Quiz\" request provides a list of users that have a Special Access record defined. The Brightspace Special Access feature an Instructor or Admin can:\r\n– Give selected learners a different due, start, and/or end date for the quiz.\r\n– Assign special time limits, grace periods, or attempts allowed for the quiz.\r\n\r\n## GET Answers Route is only available upon request\r\n\r\nAt the time this Collection is published please note that the \"Get all of the Answers for a Quiz Attempt\" route is only available to D2L customers upon request. Please contact the Developer Group within the Brightspace Developer Community to request access to this API route. We do plan to make this route generally available, but we don't yet have a specific timeframe for when this will occur.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get all of the Quizzes in a Course",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{courseid}}/quizzes/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"{{courseid}}",
+						"quizzes",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a Quiz",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "8535a60f-6c6b-4877-8a55-a64ecd566b4f",
+						"exec": [
+							"var moment = require('moment');\r",
+							"const dateNow = new Date();\r",
+							"pm.variables.set(\"startdate\", dateNow.toISOString());\r",
+							"pm.variables.set(\"duedate\", moment(dateNow).add(3,'months').toISOString());\r",
+							"pm.variables.set(\"enddate\", moment(dateNow).add(6,'months').toISOString());"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "2747a9d5-7068-4dc3-8786-ba86f4c3b556",
+						"exec": [
+							"let jsonData = pm.response.json();\r",
+							"pm.collectionVariables.set(\"quizid\", jsonData.QuizId);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Name\": \"{{$randomCatchPhrase}}\",\r\n    \"IsActive\": true,\r\n    \"SortOrder\": 2,\r\n    \"AutoExportToGrades\": false,\r\n    \"GradeItemId\": null,\r\n    \"IsAutoSetGraded\": false,\r\n    \"Instructions\":{\r\n        \"Text\": {\r\n\t\t\t\"Content\": \"{{$randomLoremSentences}}\",\r\n\t\t\t\"Type\": \"Text\"\r\n\t\t},\r\n        \"IsDisplayed\": true\r\n    },\r\n    \"Description\":{\r\n        \"Text\": {\r\n\t\t\t\"Content\": \"{{$randomLoremParagraph}}\",\r\n\t\t\t\"Type\": \"Text\"\r\n\t\t},\r\n        \"IsDisplayed\": true\r\n    },\r\n    \"StartDate\": \"{{startdate}}\",\r\n    \"EndDate\": \"{{enddate}}\",\r\n    \"DueDate\": \"{{duedate}}\",\r\n    \"DisplayInCalendar\": true,\r\n    \"SubmissionTimeLimit\": {\r\n\t\t\"IsEnforced\": true,\r\n\t\t\"ShowClock\": true,\r\n\t\t\"TimeLimitValue\": 299\r\n\t},\r\n\t\"SubmissionGracePeriod\": 2,\r\n\t\"LateSubmissionInfo\": {\r\n\t\t\"LateSubmissionOption\": 2,\r\n\t\t\"LateLimitMinutes\": 1\r\n\t},\r\n\t\"NumberOfAttemptsAllowed\": null,\r\n\t\"Password\": null,\r\n\t\"Header\": {\r\n        \"Text\": {\r\n\t\t\t\"Content\": \"{{$randomLoremSentences}}\",\r\n\t\t\t\"Type\": \"Text\"\r\n\t\t},\r\n        \"IsDisplayed\": true\r\n    },\r\n\t\"Footer\": {\r\n        \"Text\": {\r\n\t\t\t\"Content\": \"Footer\",\r\n\t\t\t\"Type\": \"Html\"\r\n\t\t},\r\n        \"IsDisplayed\": true\r\n    },\t\r\n\t\"AllowHints\": false,\r\n\t\"DisableRightClick\": true,\r\n\t\"DisablePagerAndAlerts\": true,\r\n\t\"NotificationEmail\": \"{{$randomEmail}}\",\r\n\t\"CalcTypeId\": 4,\r\n\t\"RestrictIPAddressRange\": null,\r\n\t\"CategoryId\": null,\r\n\t\"PreventMovingBackwards\" : false,\r\n\t\"Shuffle\" : true,\r\n\t\"AllowOnlyUsersWithSpecialAccess\" : false        \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{courseid}}/quizzes/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"{{courseid}}",
+						"quizzes",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "See which Users have Access to a Quiz",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{courseid}}/quizzes/{{quizid}}/access/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"{{courseid}}",
+						"quizzes",
+						"{{quizid}}",
+						"access",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Give a Learner Special Access to the Quiz",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "fef1daab-fe7c-41ae-896e-c34b90f33307",
+						"exec": [
+							"var moment = require('moment');\r",
+							"const dateNow = new Date();\r",
+							"pm.variables.set(\"startdate\", dateNow.toISOString());\r",
+							"pm.variables.set(\"duedate\", moment(dateNow).add(2,'months').toISOString());\r",
+							"pm.variables.set(\"enddate\", moment(dateNow).add(8,'months').toISOString());"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"StartDate\": \"{{startdate}}\",\r\n   \"EndDate\": \"{{enddate}}\",\r\n   \"DueDate\": \"{{duedate}}\",\r\n   \"SubmissionTimeLimit\": null,\r\n   \"AttemptsAllowed\": {\r\n      \"IsUnlimited\": false,\r\n      \"NumberOfAttemptsAllowed\": 3\r\n   }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{courseid}}/quizzes/{{quizid}}/specialaccess/{{learnerid}}",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"{{courseid}}",
+						"quizzes",
+						"{{quizid}}",
+						"specialaccess",
+						"{{learnerid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "See who has Special Access to the Quiz",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "fadbb6ed-ed07-46ef-aaf4-3a02a7b7108e",
+						"exec": [
+							"var moment = require('moment');\r",
+							"const dateNow = new Date();\r",
+							"pm.variables.set(\"startdate\", dateNow.toISOString());\r",
+							"pm.variables.set(\"duedate\", moment(dateNow).add(2,'months').toISOString());\r",
+							"pm.variables.set(\"enddate\", moment(dateNow).add(8,'months').toISOString());"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"StartDate\": \"{{startdate}}\",\r\n   \"EndDate\": \"{{enddate}}\",\r\n   \"DueDate\": \"{{duedate}}\",\r\n   \"SubmissionTimeLimit\": null,\r\n   \"AttemptsAllowed\": {\r\n      \"IsUnlimited\": false,\r\n      \"NumberOfAttemptsAllowed\": 3\r\n   }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{courseid}}/quizzes/{{quizid}}/specialaccess/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"{{courseid}}",
+						"quizzes",
+						"{{quizid}}",
+						"specialaccess",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get the Questions for a Quiz",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{courseid}}/quizzes/{{quizid}}/questions/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"{{courseid}}",
+						"quizzes",
+						"{{quizid}}",
+						"questions",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all of the Attempts for a Quiz",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f5a52ef1-a9c6-47a4-ae0f-b9bd1177a362",
+						"exec": [
+							"// Grab the first Attempt Id\r",
+							"let jsonData = pm.response.json();\r",
+							"\r",
+							"jsonData.Objects.forEach(function (value) {\r",
+							"       pm.collectionVariables.set(\"attemptid\", value.AttemptId);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{courseid}}/quizzes/{{quizid}}/attempts/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"{{courseid}}",
+						"quizzes",
+						"{{quizid}}",
+						"attempts",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all of the Answers for a Quiz Attempt",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{courseid}}/quizzes/{{quizid}}/attempts/{{attemptid}}/answers/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"{{courseid}}",
+						"quizzes",
+						"{{quizid}}",
+						"attempts",
+						"{{attemptid}}",
+						"answers",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accesstoken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "c6fa1dd9-02a4-4866-85f7-f74139dbdaec",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "0bae1ccc-5d96-40f4-acf5-8966687e4693",
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Status code is 200\", function () {",
+					"    pm.expect(pm.response.code).to.be.oneOf([201,200]);",
+					"});",
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "036f4107-3345-450b-b1d0-d39aad426b8a",
+			"key": "accesstoken",
+			"value": ""
+		},
+		{
+			"id": "adffc9b8-05b0-4f6e-8d25-9f249a76e63a",
+			"key": "BrightspaceDomain",
+			"value": "https://devcop.brightspace.com"
+		},
+		{
+			"id": "a7871456-fb75-4c10-9760-c2fbef39e428",
+			"key": "leversion",
+			"value": "1.48"
+		},
+		{
+			"id": "3aad06c8-60ca-4694-9088-39043d55f168",
+			"key": "courseid",
+			"value": ""
+		},
+		{
+			"id": "9ce8eeef-ebc6-4f73-9e03-4d522f44070f",
+			"key": "learnerid",
+			"value": ""
+		},
+		{
+			"id": "0eb61031-803d-4397-9e4a-ff10a973aca4",
+			"key": "quizid",
+			"value": ""
+		},
+		{
+			"id": "cf9321f4-6fb8-4a79-87fd-7d97a4b14a8a",
+			"key": "attemptid",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}
