@@ -1,0 +1,228 @@
+{
+	"info": {
+		"_postman_id": "6a7e1ed7-e62c-477b-a01e-33900cdb26ee",
+		"name": "Bulk Enrollments",
+		"description": "# Bulk Enrollments\r\n\r\nThe purpose of this Collection is to provide a simple example of how to use the Postman Runner feature.\r\n\r\n## Documentation\r\n#### Official API Documentation for this Collection:\r\nhttps://docs.valence.desire2learn.com/res/enroll.html#post--d2l-api-lp-(version)-enrollments-\r\n\r\n## Permissions\r\nFor this Collection your Brightspace user account will require the following Brightspace Permission(s):\r\n- Users - Enroll '{The role you plan to use}' <-- needed for each RoleId in your input file\r\n\r\n## OAuth 2.0 Scopes\r\n- ensure that your OAuth2.0 app, and access token, have the following OAuth Scopes granted:\r\nenrollment:orgunit:create\r\n\r\n## API Recipe\r\n#### Step 1 - Populate Collection Variables\r\n\r\nEdit this Collection, and update the Collection Variable values with appropriate values for your Brightspace site.\r\n\r\n- BrightspaceDomain\r\n- accesstoken\r\n\r\nIt is recommended to paste your values in the \"Current Value\" field of each Collection Variable.\r\n\r\nNote: accesstoken and refreshtoken retrieval is explained in the \"Get Initial Token\" and \"WhoAmI\" Collections.\r\n\r\nNote: the lpversion variable is pre-set to 1.28 in this Collection.\r\n\r\n#### Step 2 - Modify the input.csv file\r\n\r\nEdit the provided input.csv file.\r\n\r\nThe first row contains the Iteration Variable names. This should not be modified. For this example, the first row is: OrgUnitId,UserId,RoleId\r\n\r\nEach subsequent row in the file contains three unique identifiers which are needed to create a Brightspace Enrollment. Modify the rows in the input.csv file so they contain values relevant to your Brightspace site.\r\n\r\n#### Step 3 - Perform the Postman Runner\r\n\r\n* Choose the Bulk Enrollments Collection\r\n* In the \"Run Order\" section, make sure you only have \"Post Create an Enrollment\" selected (checked)\r\n* Click the \"Data - Select File\" button\r\n* Find and select the CSV file with your input data\r\n* Click the \"Preview\" button to confirm the formatting of your input data\r\n* Click the \"Run Bulk Enrollments\" button\r\n\r\n#### Step 4 - Review the results\r\n\r\nThe Runner will execute each row (iteration) in the CSV file. The results of the Runner will inform you, per iteration, if the call was successful (green) or not (red).\r\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Related Routes",
+			"item": [
+				{
+					"name": "Search for a User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/users/?userName=searchvalue",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"users",
+								""
+							],
+							"query": [
+								{
+									"key": "orgDefinedId",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "userName",
+									"value": "searchvalue"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Roles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/roles/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"roles",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search for an Org Unit",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/orgstructure/?exactOrgUnitName=searchvalue",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"orgstructure",
+								""
+							],
+							"query": [
+								{
+									"key": "orgUnitType",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "exactOrgUnitCode",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "exactOrgUnitName",
+									"value": "searchvalue"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Create an Enrollment",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "dc60eb0b-0127-4221-be9e-0a280763e4c5",
+						"exec": [
+							"// Retrieve the input data from the Iteration input CSV file\r",
+							"var iOrgUnitId = pm.iterationData.get('OrgUnitId');\r",
+							"var iUserId = pm.iterationData.get('UserId');\r",
+							"var iRoleId = pm.iterationData.get('RoleId');\r",
+							"\r",
+							"// place iteration values into collection variables\r",
+							"pm.collectionVariables.set(\"CourseOfferingId\", iOrgUnitId);\r",
+							"pm.collectionVariables.set(\"UserId\", iUserId);\r",
+							"pm.collectionVariables.set(\"RoleId\", iRoleId);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"OrgUnitId\": {{CourseOfferingId}},\r\n    \"UserId\": {{UserId}},\r\n    \"RoleId\": {{RoleId}}, \r\n    \"IsCascading\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/enrollments/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"lp",
+						"{{lpversion}}",
+						"enrollments",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accesstoken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "f903622e-4e99-4561-939d-86595f314999",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "29dfc2f9-6363-4595-999e-dc31da790bd4",
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Status code is 200\", function () {",
+					"    pm.expect(pm.response.code).to.be.oneOf([201,200]);",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "c9b0939a-a78b-46ca-98ff-b253e004ad10",
+			"key": "accesstoken",
+			"value": ""
+		},
+		{
+			"id": "69093aa3-cbd1-4eb3-834f-7c8a4150b7e9",
+			"key": "BrightspaceDomain",
+			"value": "https://devcop.brightspace.com"
+		},
+		{
+			"id": "7a763928-cbda-441f-a707-3971cd384bec",
+			"key": "lpversion",
+			"value": "1.28"
+		},
+		{
+			"id": "505c6c17-163c-4a9d-8e62-5957d41cf262",
+			"key": "CourseOfferingId",
+			"value": ""
+		},
+		{
+			"id": "b17c6786-2c0c-4501-9519-b549b2a19c85",
+			"key": "RoleId",
+			"value": ""
+		},
+		{
+			"id": "490227af-2a13-47d6-a9c7-38906a3f143c",
+			"key": "UserId",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}
