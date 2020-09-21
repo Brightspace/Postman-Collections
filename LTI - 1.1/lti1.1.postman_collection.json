@@ -1,0 +1,527 @@
+{
+	"info": {
+		"_postman_id": "1663ec3b-9341-45e2-9902-6ccf696d70c2",
+		"name": "LTI 1-1",
+		"description": "# External Learning Tools - LTI 1.1\r\n\r\n## Documentation\r\nhttps://docs.valence.desire2learn.com/res/lti.html\r\n\r\n## Permissions\r\nFor this Collection your Brightspace user account will require the following Brightspace Permission(s):\r\n- External Learning Tools\r\n  - Manage External Learning Tools Configuration\r\n  - Manage and Delete External Learning Tool Links\r\n  - Manage External Learning Tool Providers\r\n  - Create Quicklinks from available External Learning Tools links\r\n- Content\r\n  - View Course Content\r\n  - Manage Content\r\n  - Create and Edit Modules and Topics\r\n\r\n## OAuth 2.0 Scopes\r\n- ensure that your OAuth2.0 app, and access token, have the following OAuth Scopes granted:\r\ncore:*:*\r\ncontent:modules:read\r\n\r\n## Step 1 - Populate Collection Variables\r\n\r\nEdit this Collection, and update the Collection Variable values with appropriate values for your Brightspace site.\r\n\r\n- BrightspaceDomain\r\n- accesstoken\r\n- courseid - the orgunitid value of the course offering your quizzes are in\r\n\r\nIt is recommended to paste your values in the \"Current Value\" field of each Collection Variable.\r\n\r\nNote: accesstoken and refreshtoken retrieval is explained in the \"Get Initial Token\" and \"WhoAmI\" Collections.\r\n\r\nNote: the leversion variable is pre-set to 1.48 in this Collection.\r\n\r\nNote: the lpversion variable is pre-set to 1.23 in this Collection.\r\n\r\n## Step 2 - Run the Requests in the Collection\r\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET OrgId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a0b7bb4b-1e43-4cf2-af79-28863eaef3de",
+						"exec": [
+							"let jsonData = pm.response.json();",
+							"pm.collectionVariables.set(\"orgid\", jsonData.Identifier);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "51f38969-dfc1-4c72-bacb-132a0358ac26",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/organization/info",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"lp",
+						"{{lpversion}}",
+						"organization",
+						"info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST LTI Tool Provider",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1820ecec-4dbb-4f25-afa6-c71f4d16b307",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"console.log(jsonData.LtiToolProviderId);",
+							"pm.collectionVariables.set(\"ltitoolproviderid\", jsonData.LtiToolProviderId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"LaunchPoint\": \"https://lti.tools/saltire/tp\",\r\n    \"Secret\": \"secret\",\r\n    \"UseDefaultTcInfo\": false,\r\n    \"Key\": \"jisc.ac.uk\",\r\n    \"Name\": \"Org Tool Provider\",\r\n    \"Description\": \"This is the description of a tool provider\",\r\n    \"ContactEmail\": null,\r\n    \"IsVisible\": true,\r\n    \"SendTcInfo\": true,  \r\n    \"SendContextInfo\": true,\r\n    \"SendUserId\": true,\r\n    \"SendUserName\": true,\r\n    \"SendUserEmail\": true,\r\n    \"SendLinkTitle\": true,\r\n    \"SendLinkDescription\": true,\r\n    \"SendD2LUserName\": true,\r\n    \"SendD2LOrgDefinedId\": true,\r\n    \"SendD2LOrgRoleId\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/lti/tp/{{orgid}}",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"lti",
+						"tp",
+						"{{orgid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Sharing Rule",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"SharingOrgUnitId\": {{courseid}},\n    \"ShareWithOrgUnit\": true,\n    \"ShareWithDescendants\": false\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/lti/tp/{{orgid}}/{{ltitoolproviderid}}/sharing/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"lti",
+						"tp",
+						"{{orgid}}",
+						"{{ltitoolproviderid}}",
+						"sharing",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST LTI LInk",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "488e2380-9eac-42a4-8ebc-7279ffdc00c9",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.collectionVariables.set(\"ltilinkid\", jsonData.LtiLinkId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Title\": \"LTI Link\",\r\n    \"Url\": \"https://lti.tools/saltire/tp\",\r\n    \"Description\": \"regression\",\r\n    \"Key\": \"jisc.ac.uk\",\r\n    \"PlainSecret\": \"secret\",\r\n    \"IsVisible\": true,\r\n    \"SignMessage\": true,\r\n    \"SignWithTc\": true,\r\n    \"SendTcInfo\": true,  \r\n    \"SendContextInfo\": true,\r\n    \"SendUserId\": true,\r\n    \"SendUserName\": true,\r\n    \"SendUserEmail\": true,\r\n    \"SendLinkTitle\": true,\r\n    \"SendLinkDescription\": true,\r\n    \"SendD2LUserName\": true,\r\n    \"SendD2LOrgDefinedId\": true,\r\n    \"SendD2LOrgRoleId\": true,\r\n    \"UseToolProviderSecuritySettings\": false,\r\n    \"CustomParameters\": null\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/lti/link/{{courseid}}",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"lti",
+						"link",
+						"{{courseid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST LTI Quicklink",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "405f07b4-0f41-48db-b6ba-478e43538574",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"console.log(jsonData);",
+							"pm.collectionVariables.set(\"publicurl\", jsonData.PublicUrl);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/lti/quicklink/{{courseid}}/{{ltilinkid}}",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"lti",
+						"quicklink",
+						"{{courseid}}",
+						"{{ltilinkid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Content Module",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4b559420-5864-4525-9420-26156252bffc",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"console.log(jsonData);",
+							"pm.collectionVariables.set(\"ltimoduleid\", jsonData.Id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Title\": \"LTI Module\",\r\n    \"ShortTitle\": \"\",\r\n    \"Type\": 0,\r\n    \"ModuleStartDate\": null,\r\n    \"ModuleEndDate\": null,\r\n    \"ModuleDueDate\": null,\r\n    \"IsHidden\": false,\r\n    \"IsLocked\": false,\r\n     \"Description\": {\r\n        \"Text\": \"Module 1 Description\",\r\n        \"Html\": \"<p>Module 1 Description</p>\"\r\n    },\r\n    \"Duration\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{courseid}}/content/root/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"{{courseid}}",
+						"content",
+						"root",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Content LTI Link",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5d68bcb3-2318-427a-8de4-4c9f16d61ba4",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"console.log(jsonData);",
+							"pm.environment.set(\"lti\", jsonData.Id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"Title\": \"Content External Link Test\",\n    \"ShortTitle\": \"\",\n    \"Type\": 1,\n    \"TopicType\": 3,\n    \"Url\": \"{{publicurl}}\",\n    \"StartDate\": null,\n    \"EndDate\": null,\n    \"DueDate\": null,\n    \"IsHidden\": false,\n    \"IsLocked\": false,\n    \"OpenAsExternalResource\": true,\n    \"Description\": {\n        \"Text\": \"External Link to d2l\",\n        \"Html\": \"<p>External Link to d2l</p>\"\n    },\n    \"MajorUpdate\": false,\n    \"MajorUpdateText\": \"First Post\",\n    \"ResetCompletionTracking\": false,\n    \"Duration\": null\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/unstable/{{courseid}}/content/modules/{{ltimoduleid}}/structure/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"unstable",
+						"{{courseid}}",
+						"content",
+						"modules",
+						"{{ltimoduleid}}",
+						"structure",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET All LTI Tool Providers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/lti/tp/{{orgid}}/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"lti",
+						"tp",
+						"{{orgid}}",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET LTI Links",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/lti/link/{{courseid}}/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"lti",
+						"link",
+						"{{courseid}}",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Sharing Rule",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/lti/link/{{courseid}}/{{ltilinkid}}/sharing/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"lti",
+						"link",
+						"{{courseid}}",
+						"{{ltilinkid}}",
+						"sharing",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accesstoken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "fa2e499e-880a-4cc9-a8ba-8e6105a34992",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "e485f60f-3ddc-4ee9-b30f-5ab292281ea6",
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Status code is 200\", function () {",
+					"    pm.expect(pm.response.code).to.be.oneOf([201,200]);",
+					"});",
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "1ed6e819-5fa8-4542-a80c-b7e73efc7e4c",
+			"key": "accesstoken",
+			"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImQ0MWI1YTk1LWVmNjgtNDFhYi05NDQ2LTlmNTZlN2I4OGU2YiJ9.eyJpc3MiOiJodHRwczovL2FwaS5icmlnaHRzcGFjZS5jb20vYXV0aCIsImF1ZCI6Imh0dHBzOi8vYXBpLmJyaWdodHNwYWNlLmNvbS9hdXRoL3Rva2VuIiwiZXhwIjoxNjAwNzE0OTUxLCJuYmYiOjE2MDA3MTEzNTEsInN1YiI6IjMwMjIyIiwidGVuYW50aWQiOiJiMTI1NTE0NC0yZDUxLTQzMTItODA5Zi01NGRhMDk1NzlmOTUiLCJhenAiOiJFeHBhbmRvQ2xpZW50Iiwic2NvcGUiOiJjb250ZW50Om1vZHVsZXM6cmVhZCBjb3JlOio6KiIsImp0aSI6Ijc1YjViNTRmLWRiNDEtNDU3Yy1hMWYwLTQzZWY3NmU1ZWMxMSJ9.s7et4TzHRQqW0drDX3hBjqDcV3hYsbI4efsPvbCs7xCuTHTTdRa_iBzzEUA2mR5w40wvyHxQvuMdFv5E4bvYjfLiJ1DpAxRB6G_2xmIfNXsvdu0wDf_WSnKumS0n6zlRF9PE1WfjOjshjDtlgP2fI0DDNXiVVekim-HepnWosFI-fdDh5Wz-Sh3xV0TFUnzpC2DkmsTwGL_O4ZtEnsHZ1gxM9MeTJNcVPlU6C3NYRACeQgby0kUjWY0ugxIgtRIFu7sD9gykIYvQ3XC7FWuKoYJsH4Xa8oLboUIESHHuH2seWFO2aCSH8bQyEshty3f8QwxpvfA4LpC7iVWGnkaUsA"
+		},
+		{
+			"id": "e24ca514-371c-4c00-a6df-c8a06cad7308",
+			"key": "BrightspaceDomain",
+			"value": "https://devcop.brightspace.com"
+		},
+		{
+			"id": "e414ce6a-9c74-40f3-86e4-8cc92c931968",
+			"key": "leversion",
+			"value": "1.48"
+		},
+		{
+			"id": "f6949933-6d2e-415e-8b24-2053c22222ae",
+			"key": "lpversion",
+			"value": "1.23"
+		},
+		{
+			"id": "a1aac4ce-fd70-4d36-bc1d-ba933871bfcb",
+			"key": "courseid",
+			"value": ""
+		},
+		{
+			"id": "a487a9f1-20b2-4ccb-bcf9-368e567cae43",
+			"key": "orgid",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}
