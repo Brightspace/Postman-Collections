@@ -1,0 +1,561 @@
+{
+	"info": {
+		"_postman_id": "93779e74-f85e-44e6-9845-20017d96a768",
+		"name": "LTI 1-1",
+		"description": "# External Learning Tools - LTI 1.1\r\n\r\n## Documentation\r\nhttps://docs.valence.desire2learn.com/res/lti.html\r\n\r\n## Permissions\r\nFor this Collection your Brightspace user account will require the following Brightspace Permission(s):\r\n- External Learning Tools\r\n  - Manage External Learning Tools Configuration\r\n  - Manage and Delete External Learning Tool Links\r\n  - Manage External Learning Tool Providers\r\n  - Create Quicklinks from available External Learning Tools links\r\n- Content\r\n  - View Course Content\r\n  - Manage Content\r\n  - Create and Edit Modules and Topics\r\n\r\n## OAuth 2.0 Scopes\r\n- ensure that your OAuth2.0 app, and access token, have the following OAuth Scopes granted:\r\ncore:*:*\r\ncontent:modules:read\r\n\r\n## Step 1 - Populate Collection Variables\r\n\r\nEdit this Collection, and update the Collection Variable values with appropriate values for your Brightspace site.\r\n\r\n- BrightspaceDomain\r\n- accesstoken\r\n- courseid - the orgunitid value of the course offering you want the API requests to interact with. This Collection will create Share an LTI Tool Provider with this course, create an LTI Link in this course, and create a content link to your LTI Link in this course.\r\n\r\nIt is recommended to paste your values in the \"Current Value\" field of each Collection Variable.\r\n\r\nNote: accesstoken and refreshtoken retrieval is explained in the \"Get Initial Token\" and \"WhoAmI\" Collections.\r\n\r\nNote: the leversion variable is pre-set to 1.48 in this Collection.\r\n\r\nNote: the lpversion variable is pre-set to 1.23 in this Collection.\r\n\r\n## Step 2 - Run the Requests in the Collection\r\n\r\nThe Requests in this Collection have been seperated into two folders:\r\n\r\n#### Organization Tool Provider\r\n\r\n1. Retrieve your Organization Id - Run this request to retrieve your Organization Id value. It will get stored in a Collection Variable named orgid.\r\n2. Create an Organization Tool Provider - Running this request will create a new LTI Tool Provider in your Organization Org Unit. Review the Body of the request and modify it to your needs.\r\n3. Share the Tool Provider to your Course - This route will make your Organization Tool Provider available for use in your course (that you defined with your courseid value).\r\n\r\n#### Place an LTI Link into Content\r\n\r\n1. Create a LTI Link - Run this request to create a new LTI Link in your course. Review the Body of the request and modify it to your needs.\r\n2. Create a Quicklink for your LTI Link - Brightspace uses Quicklinks as a way of defining an LTI Link in a single URL. A Quicklink is required if you want to place your LTI Link in a location (a Content topic being the most common scenario) where learners can launch it. The outcome of this request is that the Quicklink value will be stored in a Collection Variable named \"publicurl\".\r\n3. Create a Content Module - This request creates a new Content Module in your Course. If you already know the Module you want your LTI link placed within, then you don't need to run this request. Instead, place that module's id into a Collection Variable named \"ltimoduleid\".\r\n4. Create a Content Topic with the LTI Quicklink - Running this request will place a new Content Topic in your Content Module using your Quicklink value as the topic's URL value.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Organization Tool Provider",
+			"item": [
+				{
+					"name": "Retrieve your Organization Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5d4ed155-b733-4b88-9d60-8f975c6dcc4f",
+								"exec": [
+									"let jsonData = pm.response.json();",
+									"pm.collectionVariables.set(\"orgid\", jsonData.Identifier);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "55835c4a-61bd-4a77-a792-9084ef3bdaca",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/organization/info",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"organization",
+								"info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create an Organization Tool Provider",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "736a1109-3959-4990-9623-2eca35cc218d",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"ltitoolproviderid\", jsonData.LtiToolProviderId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"LaunchPoint\": \"https://lti.tools/saltire/tp\",\r\n    \"Secret\": \"secret\",\r\n    \"UseDefaultTcInfo\": false,\r\n    \"Key\": \"jisc.ac.uk\",\r\n    \"Name\": \"Organization Tool Provider\",\r\n    \"Description\": \"This is the description of a tool provider\",\r\n    \"ContactEmail\": null,\r\n    \"IsVisible\": true,\r\n    \"SendTcInfo\": true,  \r\n    \"SendContextInfo\": true,\r\n    \"SendUserId\": true,\r\n    \"SendUserName\": true,\r\n    \"SendUserEmail\": true,\r\n    \"SendLinkTitle\": true,\r\n    \"SendLinkDescription\": true,\r\n    \"SendD2LUserName\": true,\r\n    \"SendD2LOrgDefinedId\": true,\r\n    \"SendD2LOrgRoleId\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/lti/tp/{{orgid}}",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"{{leversion}}",
+								"lti",
+								"tp",
+								"{{orgid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Share the Tool Provider to your Course",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"SharingOrgUnitId\": {{courseid}},\n    \"ShareWithOrgUnit\": true,\n    \"ShareWithDescendants\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/lti/tp/{{orgid}}/{{ltitoolproviderid}}/sharing/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"{{leversion}}",
+								"lti",
+								"tp",
+								"{{orgid}}",
+								"{{ltitoolproviderid}}",
+								"sharing",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Place an LTI Link into Content",
+			"item": [
+				{
+					"name": "Create a LTI Link",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c78ffeb1-60bd-4c9e-a6da-c588d17015f7",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"ltilinkid\", jsonData.LtiLinkId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Title\": \"LTI Link\",\r\n    \"Url\": \"https://lti.tools/saltire/tp\",\r\n    \"Description\": \"regression\",\r\n    \"Key\": \"jisc.ac.uk\",\r\n    \"PlainSecret\": \"secret\",\r\n    \"IsVisible\": true,\r\n    \"SignMessage\": true,\r\n    \"SignWithTc\": true,\r\n    \"SendTcInfo\": true,  \r\n    \"SendContextInfo\": true,\r\n    \"SendUserId\": true,\r\n    \"SendUserName\": true,\r\n    \"SendUserEmail\": true,\r\n    \"SendLinkTitle\": true,\r\n    \"SendLinkDescription\": true,\r\n    \"SendD2LUserName\": true,\r\n    \"SendD2LOrgDefinedId\": true,\r\n    \"SendD2LOrgRoleId\": true,\r\n    \"UseToolProviderSecuritySettings\": false,\r\n    \"CustomParameters\": null\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/lti/link/{{courseid}}",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"{{leversion}}",
+								"lti",
+								"link",
+								"{{courseid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a Quicklink for your LTI Link",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d3d55c7f-43c0-4453-b14d-77048f624d97",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"publicurl\", jsonData.PublicUrl);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/lti/quicklink/{{courseid}}/{{ltilinkid}}",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"{{leversion}}",
+								"lti",
+								"quicklink",
+								"{{courseid}}",
+								"{{ltilinkid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a Content Module",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ee0b6213-b2d3-4cd3-9673-29620a2af84f",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"ltimoduleid\", jsonData.Id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Title\": \"LTI Module\",\r\n    \"ShortTitle\": \"\",\r\n    \"Type\": 0,\r\n    \"ModuleStartDate\": null,\r\n    \"ModuleEndDate\": null,\r\n    \"ModuleDueDate\": null,\r\n    \"IsHidden\": false,\r\n    \"IsLocked\": false,\r\n     \"Description\": {\r\n        \"Text\": \"Module 1 Description\",\r\n        \"Html\": \"<p>Module 1 Description</p>\"\r\n    },\r\n    \"Duration\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{courseid}}/content/root/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"{{leversion}}",
+								"{{courseid}}",
+								"content",
+								"root",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a Content Topic with the LTI Quicklink",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "396b8ce8-7dd1-4fef-9742-326d35637c8b",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.environment.set(\"lti\", jsonData.Id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Title\": \"Content External Link Test\",\n    \"ShortTitle\": \"\",\n    \"Type\": 1,\n    \"TopicType\": 3,\n    \"Url\": \"{{publicurl}}\",\n    \"StartDate\": null,\n    \"EndDate\": null,\n    \"DueDate\": null,\n    \"IsHidden\": false,\n    \"IsLocked\": false,\n    \"OpenAsExternalResource\": true,\n    \"Description\": {\n        \"Text\": \"External Link to d2l\",\n        \"Html\": \"<p>External Link to d2l</p>\"\n    },\n    \"MajorUpdate\": false,\n    \"MajorUpdateText\": \"First Post\",\n    \"ResetCompletionTracking\": false,\n    \"Duration\": null\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/unstable/{{courseid}}/content/modules/{{ltimoduleid}}/structure/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"unstable",
+								"{{courseid}}",
+								"content",
+								"modules",
+								"{{ltimoduleid}}",
+								"structure",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Related Routes",
+			"item": [
+				{
+					"name": "View the LTI Sharing Rules for an LTI Link",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/lti/link/{{courseid}}/{{ltilinkid}}/sharing/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"{{leversion}}",
+								"lti",
+								"link",
+								"{{courseid}}",
+								"{{ltilinkid}}",
+								"sharing",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all LTI Links in a Course",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/lti/link/{{courseid}}/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"{{leversion}}",
+								"lti",
+								"link",
+								"{{courseid}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get the list of All Organization Tool Providers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/lti/tp/{{orgid}}/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"{{leversion}}",
+								"lti",
+								"tp",
+								"{{orgid}}",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accesstoken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "23023d4e-df03-4547-96c7-9e59d5095e80",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "94143f43-ce15-441e-b302-5b4ab914e936",
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Status code is 200\", function () {",
+					"    pm.expect(pm.response.code).to.be.oneOf([201,200]);",
+					"});",
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "73d23a5e-3403-4916-b6f1-c99fe645ec65",
+			"key": "accesstoken",
+			"value": ""
+		},
+		{
+			"id": "59d8d7aa-c774-49a6-9387-2a492c5c2bcf",
+			"key": "BrightspaceDomain",
+			"value": "https://devcop.brightspace.com"
+		},
+		{
+			"id": "d171a477-d0ab-483a-ac4c-9789f67daaba",
+			"key": "leversion",
+			"value": "1.48"
+		},
+		{
+			"id": "bc75e753-8c6b-4ed2-b723-0b470d6cd8a9",
+			"key": "lpversion",
+			"value": "1.23"
+		},
+		{
+			"id": "c95c7e33-b207-4f18-8c20-7672a098bd41",
+			"key": "courseid",
+			"value": ""
+		},
+		{
+			"id": "99b46596-5c37-4dac-8183-6196b1247e06",
+			"key": "orgid",
+			"value": ""
+		},
+		{
+			"id": "deaafd60-9817-4fd7-87a0-0a4c33961c99",
+			"key": "ltitoolproviderid",
+			"value": ""
+		},
+		{
+			"id": "62a92d19-9d89-499b-9685-e2a2bdbffa37",
+			"key": "ltilinkid",
+			"value": ""
+		},
+		{
+			"id": "d3e3b2b0-dc65-4f40-93a1-729c1fa8e9a8",
+			"key": "publicurl",
+			"value": ""
+		},
+		{
+			"id": "eb9f714d-7137-40e6-ab8b-ed83db391430",
+			"key": "ltimoduleid",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}
