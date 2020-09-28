@@ -1,0 +1,335 @@
+{
+	"info": {
+		"_postman_id": "70776aaf-a634-4bc1-af2d-ef47b68e5739",
+		"name": "Distribute an Announcement",
+		"description": "# Distribute an Announcement\r\nCreate a News Announcement in each Org Unit provided in a CSV input file of OrgUnitId values.\r\n\r\n## Documentation\r\nhttps://docs.valence.desire2learn.com/res/news.html#post--d2l-api-le-(version)-(orgUnitId)-news-\r\n\r\n## Permissions\r\nFor this Collection your Brightspace user account will require the following Brightspace Permission(s):\r\n- News\r\n  - See News\r\n  - Add/Edit/Delete News\r\n  - Change Display Author Information Setting\r\n\r\nThe API user must be enrolled in every Org Unit defined in the input file. This is most easily accomplished by having the API user's role to be \"cascading\".\r\n\r\n## OAuth 2.0 Scopes\r\n- ensure that your OAuth2.0 app, and access token, have the following OAuth Scopes granted:\r\ncore:*:*\r\n\r\n## Step 1 - Populate Collection Variables\r\n\r\nEdit this Collection, and update the Collection Variable values with appropriate values for your Brightspace site.\r\n\r\n- BrightspaceDomain\r\n- accesstoken\r\n\r\nIt is recommended to paste your values in the \"Current Value\" field of each Collection Variable.\r\n\r\nNote: accesstoken and refreshtoken retrieval is explained in the \"Get Initial Token\" and \"WhoAmI\" Collections.\r\n\r\nNote: the leversion variable is pre-set to 1.48 in this Collection.\r\n\r\n## Step 2 - Gather the Data for your Announcement\r\n\r\nThe input data for the Announcement will be pulled from the following Collection Variables\"\r\n- Title\r\n- BodyText or BodyHtml\r\n- StartDate\r\n- EndDate\r\n\r\nThere are two ways that you can populate these Collection Variables\"\r\n\r\n1. Manually enter your data in the Current Value field for each variable. Note that sample values are provided in the Initial Value field for each variable.\r\n2. Pull the data from an existing News Item. Run the \"Use an existing News Item as your Data Source\" request. Prior to running this request you will need to update the OrgUnitId and NewsId Collection Variables to that of your source News Item.\r\n\r\n## Step 3 - Modify the input.csv file\r\n\r\nEdit the provided input.csv file.\r\n\r\nThe first row contains the Iteration Variable names. This should not be modified. For this example, the first row is: OrgUnitId\r\n\r\nEach subsequent row in the file contains the unique OrgUnitId values which identify the Org Units the News Announcement should be created within. Modify the rows in the input.csv file so they contain values relevant to your Brightspace site.\r\n\r\n## Step 4 - Perform the Postman Runner\r\n\r\nWhen creating a News Item you have the option of including either basic text for the Body of the Announcement, or html content. This Collection contains a request for each option. Make sure you select the appropriate request (just run one of them... not both).\r\n\r\n* Choose the Distribute an Announcement\r\n* In the \"Run Order\" section, make sure you only have \"Create a News Announcement - {Text or Html} Body\" selected (checked)\r\n* Click the \"Data - Select File\" button\r\n* Find and select the CSV file with your input data\r\n* Click the \"Preview\" button to confirm the formatting of your input data\r\n* Click the \"Run Distribute an Announcement\" button\r\n\r\n## Step 5 - Review the results\r\n\r\nThe Runner will execute each row (iteration) in the CSV file. The results of the Runner will inform you, per iteration, if the call was successful (green) or not (red).\r\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Related Routes",
+			"item": [
+				{
+					"name": "Get all of the News Items in an Org Unit",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{OrgUnitId}}/news/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"{{leversion}}",
+								"{{OrgUnitId}}",
+								"news",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a Specific News Item",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{OrgUnitId}}/news/{{newsId}}",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"{{leversion}}",
+								"{{OrgUnitId}}",
+								"news",
+								"{{newsId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Use an existing News Item as your Data Source",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "45b85e65-4f32-4b7d-8512-8f2163d4c0bd",
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"pm.collectionVariables.set(\"Title\", jsonData.Title);\r",
+									"pm.collectionVariables.set(\"BodyText\", jsonData.Body.Text);\r",
+									"pm.collectionVariables.set(\"BodyHtml\", jsonData.Body.Html);\r",
+									"pm.collectionVariables.set(\"StartDate\", jsonData.StartDate);\r",
+									"pm.collectionVariables.set(\"EndDate\", jsonData.EndDate);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{OrgUnitId}}/news/{{newsId}}",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"{{leversion}}",
+								"{{OrgUnitId}}",
+								"news",
+								"{{newsId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Create a News Announcement - Text Body",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "31fabc2d-afa0-4a28-967e-60006b17b556",
+						"exec": [
+							"/////////////////////////////////////////////////////////////////////////////\r",
+							"// Uncomment this code if you want to programatically set your start and end date values\r",
+							"/////////////////////////////////////////////////////////////////////////////\r",
+							"//var moment = require('moment');\r",
+							"//const dateNow = new Date();\r",
+							"//pm.variables.set(\"startdate\", dateNow.toISOString());\r",
+							"//pm.variables.set(\"enddate\", moment(dateNow).add(3,'months').toISOString());\r",
+							"/////////////////////////////////////////////////////////////////////////////\r",
+							"\r",
+							"// Retrieve the input data from the Iteration input CSV file\r",
+							"var iOrgUnitId = pm.iterationData.get('OrgUnitId');\r",
+							"// place iteration values into collection variables\r",
+							"pm.collectionVariables.set(\"OrgUnitId\", iOrgUnitId);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "afe12b3b-3581-4f0a-b7c7-70b01f8e859e",
+						"exec": [
+							"if (pm.response.code == 200) {\r",
+							"    let jsonData = pm.response.json();\r",
+							"    pm.collectionVariables.set(\"newsId\", jsonData.Id);\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Title\": \"{{Title}}\",\r\n    \"Body\": {\r\n        \"Text\": \"{{BodyText}}\",\r\n        \"Html\": null\r\n    },\r\n    \"StartDate\": \"{{StartDate}}\",\r\n    \"EndDate\": \"{{EndDate}}\",\r\n    \"IsGlobal\": false,\r\n    \"IsPublished\": true,\r\n    \"ShowOnlyInCourseOfferings\": false,\r\n    \"IsAuthorInfoShown\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{OrgUnitId}}/news/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"{{OrgUnitId}}",
+						"news",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a News Announcement - Html Body",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "7e2aab61-aaa5-4358-ae78-7a90dfe31ebd",
+						"exec": [
+							"/////////////////////////////////////////////////////////////////////////////\r",
+							"// Uncomment this code if you want to programatically set your start and end date values\r",
+							"/////////////////////////////////////////////////////////////////////////////\r",
+							"//var moment = require('moment');\r",
+							"//const dateNow = new Date();\r",
+							"//pm.variables.set(\"startdate\", dateNow.toISOString());\r",
+							"//pm.variables.set(\"enddate\", moment(dateNow).add(3,'months').toISOString());\r",
+							"/////////////////////////////////////////////////////////////////////////////\r",
+							"\r",
+							"// Retrieve the input data from the Iteration input CSV file\r",
+							"var iOrgUnitId = pm.iterationData.get('OrgUnitId');\r",
+							"// place iteration values into collection variables\r",
+							"pm.collectionVariables.set(\"OrgUnitId\", iOrgUnitId);\r",
+							"\r",
+							"// Convert any double quotes to single quotes\r",
+							"let tmpBodyHtml = pm.variables.get(\"BodyHtml\");\r",
+							"pm.collectionVariables.set(\"BodyHtml\", tmpBodyHtml.replace(/\"/g, \"'\"));\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "16d7e153-d7df-4a13-8e81-b0b2aeb18bae",
+						"exec": [
+							"if (pm.response.code == 200) {\r",
+							"    let jsonData = pm.response.json();\r",
+							"    pm.collectionVariables.set(\"newsId\", jsonData.Id);\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Title\": \"{{Title}}\",\r\n    \"Body\": {\r\n        \"Text\": null,\r\n        \"Html\": \"{{BodyHtml}}\"\r\n    },\r\n    \"StartDate\": \"{{StartDate}}\",\r\n    \"EndDate\": \"{{EndDate}}\",\r\n    \"IsGlobal\": false,\r\n    \"IsPublished\": true,\r\n    \"ShowOnlyInCourseOfferings\": false,\r\n    \"IsAuthorInfoShown\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{OrgUnitId}}/news/",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"{{OrgUnitId}}",
+						"news",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accesstoken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "84f58240-e9b7-489e-8259-952a5ecbc027",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "d44c4fce-a4ce-4323-b384-6df151fdeec2",
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Status code is 200\", function () {",
+					"    pm.expect(pm.response.code).to.be.oneOf([201,200]);",
+					"});",
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "e6c0f517-6ffe-473e-88ae-bfb57e2eb4e0",
+			"key": "accesstoken",
+			"value": ""
+		},
+		{
+			"id": "ed161cc8-e457-435e-a5e1-5f95d2e4ba9a",
+			"key": "BrightspaceDomain",
+			"value": "https://devcop.brightspace.com"
+		},
+		{
+			"id": "ee3b6c4d-b088-4829-a207-ae7c74e22405",
+			"key": "leversion",
+			"value": "1.48"
+		},
+		{
+			"id": "fc7369d3-a1e9-4a8c-8d24-dda0433e85ce",
+			"key": "OrgUnitId",
+			"value": ""
+		},
+		{
+			"id": "50b8936b-2f14-4274-b2e8-3bad7a715cd2",
+			"key": "newsId",
+			"value": ""
+		},
+		{
+			"id": "e44755bf-0272-4ded-8d4a-11afb1533cb1",
+			"key": "Title",
+			"value": "This is your announcement's title"
+		},
+		{
+			"id": "b42c91e5-fa52-45de-bcad-755771b41b10",
+			"key": "BodyText",
+			"value": "This is the Body of the Announcement."
+		},
+		{
+			"id": "9b2f78fa-bc3b-44e6-beb7-22f2e6f735e1",
+			"key": "BodyHtml",
+			"value": "<p>This is the <strong>Body</strong> of the <a rel='noopener' href='https://github.com/Brightspace/Postman-Collections' target='_blank'>Announcement</a>.</p>"
+		},
+		{
+			"id": "186f2179-28d7-4ccf-96d0-7657c1984c0f",
+			"key": "StartDate",
+			"value": "2020-09-24T18:00:00.000Z"
+		},
+		{
+			"id": "48ff3692-339d-43e3-8413-ef4e309946f3",
+			"key": "EndDate",
+			"value": "2020-11-23T09:00:00.000Z"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
