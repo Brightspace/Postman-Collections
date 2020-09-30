@@ -17,31 +17,16 @@ https://github.com/Brightspace/Postman-Collections/tree/master/WhoAmI
 The purpose of this Collection is to provide a basic introduction on how to retrieve a new OAuth 2.0 Access Token based on a valid Refresh Token. Once this is done, the collection shows how you can use the Access Token to perform the Brightspace API WhoAmI call.
 
 # Dive Deeper
-Once you have learned Brightspace API Authentication you can now start using these Postman Collections which highlight different routes and solutions.
+Once you have learned Brightspace API Authentication you can now start using all of the other collections in this repository.
 
-## Create a Course, a User, and an Enrollment
+## Most Recent Updates
 
-https://github.com/Brightspace/Postman-Collections/tree/master/Create%20a%20Course%20a%20User%20and%20an%20Enrollment
+Since September 2020's Fusion Extensibility Lab, we have launched 3 new Collections!
+1. LTI 1.1 - A reference Collection for all LTI 1.1 related API routes
+2. Distribute an Announcement - Provides a Runner guide for blasting a News Item out to many Courses
+3. Bulk Special Access - Provides a single bulk process to apply Special Access rules for Learners across multiple courses and Learning Activity Types.
 
-This Collection provides a recipe for creating a new Course Offering, and a new Brightspace User. Lastly, it enrolls the new User into the new Course Offering.
-
-## Data Hub
-
-https://github.com/Brightspace/Postman-Collections/tree/master/Data%20Hub
-
-This Collection outlines two key API routes which allow for the discovery and download of Brightspace Data Sets.
-
-## Source and Destination Course
-
-https://github.com/Brightspace/Postman-Collections/tree/master/Source%20and%20Destination%20Course
-
-This Collection takes a Course Template as input. It then shows how to create "Source" course and "Destination" course children for the provided course template. Lastly, it initiates a Course Copy process to copy the components from the Source to the Destination.
-
-## Notification Settings
-
-https://github.com/Brightspace/Postman-Collections/tree/master/NotificationSettings
-
-This Collection allows the API update of Brightspace Notification Settings by a Service Account.
+**All three new Collections were created based on Customer Requests in the Brightspace Community.**
 
 # More Information
 

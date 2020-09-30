@@ -1,0 +1,519 @@
+{
+	"info": {
+		"_postman_id": "0920ef68-3011-4887-9d0b-9cb91124a4a3",
+		"name": "Bulk Special Access",
+		"description": "# Bulk Special Access\r\n\r\nThis Collection supports the creation of Special Access rules for provided Users across provided Quizzes, Assignments and Surveys. This Collection can be used in a Runner to apply Special Access rules in bulk.\r\n\r\n## Documentation\r\n#### Official API Documentation for this Collection:\r\n* https://docs.valence.desire2learn.com/res/quiz.html#put--d2l-api-le-(version)-(orgUnitId)-quizzes-(quizId)-specialaccess-(userId)\r\n* https://docs.valence.desire2learn.com/res/dropbox.html#put--d2l-api-le-(version)-(orgUnitId)-dropbox-folders-(folderId)-specialaccess-(userId)\r\n* https://docs.valence.desire2learn.com/res/survey.html#put--d2l-api-le-(version)-(orgUnitId)-surveys-(surveyId)-specialaccess-(userId)\r\n\r\n## Permissions\r\nFor this Collection your Brightspace user account will require the following Brightspace Permission(s):\r\n* Dropbox\r\n  * See and Manage Dropbox\r\n  * Add/Edit Folders\r\n  * Set Special Access on Dropbox Folders\r\n* Quizzes\r\n  * Edit Quiz Properties\r\n  * Add Special Access\r\n* Surveys\r\n  * Manage the Surveys Tool\r\n  * Edit Survey Properties\r\n  * Add Special Access\r\n\r\n## OAuth 2.0 Scopes\r\n- ensure that your OAuth2.0 app, and access token, have the following OAuth Scopes granted:\r\nquizzing:quizzes:write\r\ndropbox:folders:write\r\nsurveys:surveys:update\r\n\r\n## Step 1 - Populate Collection Variables\r\n\r\nEdit this Collection, and update the Collection Variable values with appropriate values for your Brightspace site.\r\n\r\n- BrightspaceDomain\r\n- accesstoken\r\n\r\nIt is recommended to paste your values in the \"Current Value\" field of each Collection Variable.\r\n\r\nNote: accesstoken and refreshtoken retrieval is explained in the \"Get Initial Token\" and \"WhoAmI\" Collections.\r\n\r\nNote: the leversion variable is pre-set to 1.48 in this Collection.\r\n\r\n#### Define your Special Access Date Values\r\nSpecial Access rules vary slightly between Quizzes, Assignments and Surveys. The Brightspace API supports these variances. For simplicity, this Collection is setup to only support the setting of Due Date, Start Date, and End Date values (which are the most commonly used Special Access settings). Please modify the Collection to match your specific requirements.\r\n\r\nThere are three variables in the Collection which you need to set:\r\n* StartDate\r\n* EndDate\r\n* DueDate\r\n\r\nThese values support either a value of null or a UTC Date Time value (e.g. \"2020-10-03T17:47:00.000Z\"). Example values are included in the Collection. \r\n\r\nNote: If you are using date values, ensure you have double quotation marks at the beginning and end of the value. For a null value, just use null (with no quotation marks).\r\n\r\n## Step 2 - Modify the input.csv file\r\n\r\nEdit the provided input.csv file.\r\n\r\nThe first row contains the Iteration Variable names. This should not be modified. For this example, the first row is: ActivityType,OrgUnitId,ActivityId,UserId\r\n\r\n* ActivityType = This value must be one of these supported values: Quiz, Assignment, or Survey\r\n* OrgUnitId = The identifier for the Org Unit the Learning Activity is in\r\n* ActivityId = The identifier of the specific Learning Activity\r\n* UserId = The identifier of the user the Special Access rules will be applied to\r\n\r\nEach subsequent row in the file contains four values that define the specific Learning Activity (Quiz, Assignment, or Survey) in the specific course that the Special Access rules will be applied to. Special Access is applied to a User, so a UserId is also required.\r\n\r\nModify the rows in the input.csv file so they contain values relevant to your Brightspace site.\r\n\r\n## Step 3 - Perform the Postman Runner\r\n\r\n* Choose the \"Bulk Special Access\" Collection\r\n* In the \"Run Order\" section, make sure you select the following requests:\r\n  * Pull in the Input Data\r\n  * Quiz Special Access\r\n  * Assignment Special Access\r\n  * Survey Special Access\r\n* Click the \"Data - Select File\" button\r\n* Find and select the CSV file with your input data\r\n* Click the \"Preview\" button to confirm the formatting of your input data\r\n* Click the \"Run Bulk Special Access\" button\r\n\r\n## Step 4 - Review the results\r\n\r\nThe Runner will execute each row (iteration) in the CSV file. The results of the Runner will inform you, per iteration, if the call was successful (green) or not (red).\r\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Related Routes",
+			"item": [
+				{
+					"name": "Get Quizzes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "28c9da4b-eb2f-4020-8355-193e7242080f",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{OrgUnitId}}/quizzes/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"{{leversion}}",
+								"{{OrgUnitId}}",
+								"quizzes",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Special Access for a Quiz",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ef1d4396-4d1c-492b-9dc0-5e38d018365a",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{OrgUnitId}}/quizzes/{{ActivityId}}/specialaccess/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"{{leversion}}",
+								"{{OrgUnitId}}",
+								"quizzes",
+								"{{ActivityId}}",
+								"specialaccess",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Special Access for a Survey",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5a2670e2-ce35-4b91-96e5-c7bc668590c1",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{OrgUnitId}}/surveys/{{ActivityId}}/specialaccess/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"{{leversion}}",
+								"{{OrgUnitId}}",
+								"surveys",
+								"{{ActivityId}}",
+								"specialaccess",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Special Access for an Assignment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "dbdd14a7-9db0-4cef-8f48-67d77bc9bff9",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{OrgUnitId}}/dropbox/folders/{{ActivityId}}/specialaccess/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"{{leversion}}",
+								"{{OrgUnitId}}",
+								"dropbox",
+								"folders",
+								"{{ActivityId}}",
+								"specialaccess",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Surveys",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a2484f39-be86-4de5-9b3f-269bb77403c9",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{OrgUnitId}}/surveys/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"{{leversion}}",
+								"{{OrgUnitId}}",
+								"surveys",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Assignments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "04c6785c-bf8e-4f24-a2d9-32129e531701",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{OrgUnitId}}/dropbox/folders/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"{{leversion}}",
+								"{{OrgUnitId}}",
+								"dropbox",
+								"folders",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Pull in the Input Data",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "4a25b399-2184-4d49-8fb2-b9b5833f0ad0",
+						"exec": [
+							"// Retrieve the input data from the Iteration input CSV file\r",
+							"var iActivityType = pm.iterationData.get('ActivityType');\r",
+							"var iOrgUnitId = pm.iterationData.get('OrgUnitId');\r",
+							"var iActivityId = pm.iterationData.get('ActivityId');\r",
+							"var iUserId = pm.iterationData.get('UserId');\r",
+							"// place iteration values into collection variables\r",
+							"pm.collectionVariables.set(\"ActivityType\", iActivityType);\r",
+							"pm.collectionVariables.set(\"OrgUnitId\", iOrgUnitId);\r",
+							"pm.collectionVariables.set(\"ActivityId\", iActivityId);\r",
+							"pm.collectionVariables.set(\"UserId\", iUserId);\r",
+							"\r",
+							"// Based on the Activity Type select the Request to process\r",
+							"// If the inputted Activity Type is not recognized then do nothing\r",
+							"switch(iActivityType) {\r",
+							"  case \"Quiz\":\r",
+							"    postman.setNextRequest(\"Quiz Special Access\");\r",
+							"    break;\r",
+							"  case \"Assignment\":\r",
+							"    postman.setNextRequest(\"Assignment Special Access\");\r",
+							"    break;\r",
+							"  case \"Survey\":\r",
+							"    postman.setNextRequest(\"Survey Special Access\");\r",
+							"    break;\r",
+							"  default:\r",
+							"    postman.setNextRequest(null);\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "postman-echo.com/get",
+					"host": [
+						"postman-echo",
+						"com"
+					],
+					"path": [
+						"get"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Quiz Special Access",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "eb038714-ee63-4e9e-8623-6d57d468c947",
+						"exec": [
+							"postman.setNextRequest(null);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"StartDate\": {{StartDate}},\r\n    \"EndDate\": {{EndDate}},\r\n    \"DueDate\": {{DueDate}},\r\n    \"SubmissionTimeLimit\": null,\r\n    \"AttemptsAllowed\": null\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{OrgUnitId}}/quizzes/{{ActivityId}}/specialaccess/{{UserId}}",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"{{OrgUnitId}}",
+						"quizzes",
+						"{{ActivityId}}",
+						"specialaccess",
+						"{{UserId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Assignment Special Access",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6758bae6-e72b-4e77-a94f-b00de3ca4f23",
+						"exec": [
+							"postman.setNextRequest(null);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"StartDate\": {{StartDate}},\r\n    \"EndDate\": {{EndDate}},\r\n    \"DueDate\": {{DueDate}}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{OrgUnitId}}/dropbox/folders/{{ActivityId}}/specialaccess/{{UserId}}",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"{{OrgUnitId}}",
+						"dropbox",
+						"folders",
+						"{{ActivityId}}",
+						"specialaccess",
+						"{{UserId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Survey Special Access",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9baeda60-77db-49f4-80aa-9adf4221d01b",
+						"exec": [
+							"postman.setNextRequest(null);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"StartDate\": {{StartDate}},\r\n    \"EndDate\": {{EndDate}}\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{OrgUnitId}}/surveys/{{ActivityId}}/specialaccess/{{UserId}}",
+					"host": [
+						"{{BrightspaceDomain}}"
+					],
+					"path": [
+						"d2l",
+						"api",
+						"le",
+						"{{leversion}}",
+						"{{OrgUnitId}}",
+						"surveys",
+						"{{ActivityId}}",
+						"specialaccess",
+						"{{UserId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accesstoken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "24a820db-3021-46bd-a5bf-4eed8b8a2f36",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "3b1c2d77-4469-43ae-9baa-23a1d843b7fd",
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Status code is 200\", function () {",
+					"    pm.expect(pm.response.code).to.be.oneOf([201,200]);",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "25f32ea8-6306-4116-8a40-4b7487cf84f5",
+			"key": "accesstoken",
+			"value": ""
+		},
+		{
+			"id": "405c37e8-1e6e-406b-a501-6d00fa728cbe",
+			"key": "BrightspaceDomain",
+			"value": "https://devcop.brightspace.com"
+		},
+		{
+			"id": "48f5e28d-6702-4a9b-90ad-f55c1b14b70f",
+			"key": "leversion",
+			"value": "1.48"
+		},
+		{
+			"id": "8a2af394-5f60-4c27-8944-72a94c7395aa",
+			"key": "OrgUnitId",
+			"value": ""
+		},
+		{
+			"id": "8a16d6b8-1ddd-4fd6-9f1a-35fcd7d68e4b",
+			"key": "ActivityType",
+			"value": ""
+		},
+		{
+			"id": "622e3bf4-beea-4c1b-ac77-6a7f2aff6cad",
+			"key": "ActivityId",
+			"value": ""
+		},
+		{
+			"id": "8d0c3a2a-57dc-4393-aa1d-ea1d8ea0996c",
+			"key": "UserId",
+			"value": ""
+		},
+		{
+			"id": "0ea68602-7f78-474c-9ee7-df58c82c2033",
+			"key": "StartDate",
+			"value": "2020-09-29T17:48:00.000Z"
+		},
+		{
+			"id": "7bc35c5e-16dd-41f9-beac-8c82a3908ca5",
+			"key": "EndDate",
+			"value": "null"
+		},
+		{
+			"id": "ea6ae074-a2ef-46ac-af8a-de5ba3e7a4a5",
+			"key": "DueDate",
+			"value": "2020-10-03T17:47:00.000Z"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

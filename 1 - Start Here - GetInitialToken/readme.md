@@ -10,6 +10,7 @@ For this Collection your Brightspace user account will require the following Bri
 - Manage Extensibility - Can Manage Extensibility
 
 ## API Recipe
+
 #### Step 1 - Register your Brightspace OAuth 2.0 Application
 
 In order to perform Brightspace API calls you require an API App. Follow these instructions to create an OAuth 2.0 API Application:
@@ -38,7 +39,6 @@ It is recommended to paste your values in the "Current Value" field of each Coll
 5) Copy and store the generated Access Token and refresh_token values. (NOTE 2)
 
 A video example is also available in this repository (Get Initial Tokens.mp4).
-
 
 NOTE 1 
 

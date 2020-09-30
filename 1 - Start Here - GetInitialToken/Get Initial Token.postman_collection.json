@@ -1,8 +1,8 @@
 {
 	"info": {
-		"_postman_id": "de36190a-b5de-493a-a696-7f3db95e588a",
+		"_postman_id": "0931b9fc-487c-4b9b-9de2-ba376c7db640",
 		"name": "Get Initial Token",
-		"description": "Get Initial Token Collection\r\n\r\nThe purpose of this collection is to provide a guide for generating an initial OAuth 2.0 Access Token and Refresh Token.\r\n\r\nOfficial API Documentation for this collection is available here - https://docs.valence.desire2learn.com/basic/oauth2.html\r\n\r\nFor this Collection your Brightspace user account will require the following Brightspace Permission(s):\r\n- Manage Extensibility - Can Manage Extensibility\r\n\r\nStep 1 - Register your Brightspace OAuth 2.0 Application\r\n\r\nIn order to perform Brightspace API calls you require an API App. Follow these instructions to create an OAuth 2.0 API Application:\r\n\r\nhttps://docs.valence.desire2learn.com/basic/oauth2.html#register-your-application\r\n\r\nA video example is also available in this repository (Register an OAuth2 App.mp4).\r\n\r\n\r\nStep 2 - Copy OAuth 2.0 Credentials to Postman\r\n\r\nEdit this Collection, and update the Collection Variable values with the credentials of your new OAuth 2.0 App.\r\n\r\n- callbackurl\r\n- clientid\r\n- clientsecret\r\n- oauth2scope\r\n\r\nIt is recommended to paste your values in the \"Current Value\" field of each Collection Variable.\r\n\r\n\r\nStep 3 - Authenticate and get your Tokens.\r\n\r\n1) While still Editing the Collection, select the Authorization tab.\r\n2) Click the \"Get New Access Token\" button.\r\n3) Click the \"Request Token\" button.\r\n4) Login to Brightspace. (NOTE 1)\r\n5) Copy and store the generated Access Token and refresh_token values. (NOTE 2)\r\n\r\nA video example is also available in this repository (Get Initial Tokens.mp4).\r\n\r\n\r\nNOTE 1 \r\n\r\nThere are some cases where you will need to redirect Postman to a Brightspace Login page that is not the default. To do so, follow these steps:\r\n- Click \"View\"\r\n- Click \"Developer\"\r\n- Click \"Show DevTools(Current Shell)\". Doing so will pop up a Console tab.\r\n- In the Console enter the following: window.location.href=\"{web address of the Brightspace Login page you require}\"\r\n  - e.g. window.location.href=\"https://learning.brightspace.com/d2l/login?noredirect=1\"\r\n\r\nNOTE 2\r\n\r\nIt is suggested that you store the Access Token and Refresh Token in either a Global or Environment variable in Postman so you can use them across multiple Postman Collections and Requests.\r\n",
+		"description": "# Get Initial Token Collection\r\n\r\nThe purpose of this collection is to provide a guide for generating an initial OAuth 2.0 Access Token and Refresh Token.\r\n\r\n## Documentation\r\nOfficial API Documentation for this collection is available here - https://docs.valence.desire2learn.com/basic/oauth2.html\r\n\r\n## Brightspace Permissions\r\nFor this Collection your Brightspace user account will require the following Brightspace Permission(s):\r\n- Manage Extensibility - Can Manage Extensibility\r\n\r\n## API Recipe\r\n\r\n#### Step 1 - Register your Brightspace OAuth 2.0 Application\r\n\r\nIn order to perform Brightspace API calls you require an API App. Follow these instructions to create an OAuth 2.0 API Application:\r\n\r\nhttps://docs.valence.desire2learn.com/basic/oauth2.html#register-your-application\r\n\r\nA video example is also available in this repository (Register an OAuth2 App.mp4).\r\n\r\n#### Step 2 - Copy OAuth 2.0 Credentials to Postman\r\n\r\nEdit this Collection, and update the Collection Variable values with the credentials of your new OAuth 2.0 App.\r\n\r\n- callbackurl\r\n- clientid\r\n- clientsecret\r\n- oauth2scope\r\n\r\nIt is recommended to paste your values in the \"Current Value\" field of each Collection Variable.\r\n\r\n#### Step 3 - Authenticate and get your Tokens.\r\n\r\n1) While still Editing the Collection, select the Authorization tab.\r\n2) Click the \"Get New Access Token\" button.\r\n3) Click the \"Request Token\" button.\r\n4) Login to Brightspace. (NOTE 1)\r\n5) Copy and store the generated Access Token and refresh_token values. (NOTE 2)\r\n\r\nA video example is also available in this repository (Get Initial Tokens.mp4).\r\n\r\nNOTE 1 \r\n\r\nThere are some cases where you will need to redirect Postman to a Brightspace Login page that is not the default. To do so, follow these steps:\r\n- Click \"View\"\r\n- Click \"Developer\"\r\n- Click \"Show DevTools(Current Shell)\". Doing so will pop up a Console tab.\r\n- In the Console enter the following: window.location.href=\"{web address of the Brightspace Login page you require}\"\r\n  - e.g. window.location.href=\"https://learning.brightspace.com/d2l/login?noredirect=1\"\r\n\r\nNOTE 2\r\n\r\nIt is suggested that you store the Access Token and Refresh Token in either a Global or Environment variable in Postman so you can use them across multiple Postman Collections and Requests.\r\n",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [],
@@ -11,7 +11,7 @@
 		"oauth2": [
 			{
 				"key": "accessToken",
-				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjU2ODFiOTljLWVlYzAtNDY3Yy1hOTA2LTJkMzc0NTdlMWVmNCJ9.eyJpc3MiOiJodHRwczovL2FwaS5icmlnaHRzcGFjZS5jb20vYXV0aCIsImF1ZCI6Imh0dHBzOi8vYXBpLmJyaWdodHNwYWNlLmNvbS9hdXRoL3Rva2VuIiwiZXhwIjoxNTkxNzI4MTI3LCJuYmYiOjE1OTE3MjQ1MjcsInN1YiI6IjE1ODYiLCJ0ZW5hbnRpZCI6ImRiZWY1YTIyLTQ5OGQtNGQzNy04N2E0LTY0MzJiZTI2MTE4MiIsImF6cCI6ImNiMGZhNDk5LTEwMDgtNGQ3ZC1hNjBkLTg0MWNjYmRjMDE5MyIsInNjb3BlIjoiY29yZToqOioiLCJqdGkiOiI1MjExNzc0Yy1lOThlLTQ1N2QtODY5ZS0zNGFkOGZlZjBjYzEifQ.NTBfUhXI7CdgLroklm8KiakRjvRS-syjOESmxjEah3n6XbhNoDOzrQ5jzgbEhajI1B8Bqwkiiv35GmS9GC5urUqmYKy5mkGIEwlYfYCzuY6IcPH01h9djHUJrDuOPFP1bqdppidF2YfZMq5BDqvTO2BO9u5MWpqefWKK-Ojpxox4LPyzId9ubQJWA_5sjHQ591YzRj81aHzs1P0ZkRmZhEXL_mNzfrjGiV8sw_rIfC3CE2aocEZTgtuVzZIUGxPwajvqazVfCsshrDKTZ8tz_HduyQ_-VR-8FSnW-ydIYfSsX6KTHGmo7Jx5A5HC4TMGQ-1_kPln18sytiR3DK3v0A",
+				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjVkMjZmMzMxLTYwNDUtNDJmYy05MTU2LWJlZmQ3NThhMzI0MCJ9.eyJpc3MiOiJodHRwczovL2FwaS5icmlnaHRzcGFjZS5jb20vYXV0aCIsImF1ZCI6Imh0dHBzOi8vYXBpLmJyaWdodHNwYWNlLmNvbS9hdXRoL3Rva2VuIiwiZXhwIjoxNjAxNDc1NjMxLCJuYmYiOjE2MDE0NzIwMzEsInN1YiI6IjE0MTgyNCIsInRlbmFudGlkIjoiNTI3MzEzMTctMzcyYS00ZGI0LWI0OWQtNDk1MDJjZTQzZjJiIiwiYXpwIjoiODVlNzZlY2EtZGQ2ZC00MTEzLWFjMzMtYjBhNzc3NDhhYjRhIiwic2NvcGUiOiJjb250ZW50Oio6KiBjb3JlOio6KiBkYXRhaHViOio6KiBkcm9wYm94Oio6KiBlbnJvbGxtZW50Oio6KiBncmFkZXM6KjoqIHF1aXp6aW5nOio6KiByZXBvcnRpbmc6KjoqIHN1cnZleXM6KjoqIHVzZXJzOio6KiIsImp0aSI6IjBiZGIxNDJmLTc0Y2QtNDg2NS1hY2FkLTQ5NjUzOTIyYmY4YiJ9.OdCLiLKv3W_gpO3Bcpv_4PEX-LDqBReETSduC0ghkGFxAmRc8sYHxeiaqXy1P5MAQChxl_C5UMqOG0YuiJGxsmBYT_3aMnr4zTdYxkhNp7vpe1KM8BhAQ3bbKg2dGyA9ZVy5e_KrVa8hur5YuXuQnm5NS4L2RW8onTXIxA48iJI7a0sTRp3Bb76DaMcPbOjNXze-ENzG-8oZwtXsS1t0Dx3HjizIk-Lto6Cd2hnTYMa8X1NVij_1WKNwsIRaxP_PxCtr6YT6EPjoCvriw5lG_4lrbzcvUrG6HdfmZrOyGomL_GHksTVbyGMUSpmRtof8tXEawQPtcYzUbYSp_ZwFeQ",
 				"type": "string"
 			},
 			{
@@ -30,7 +30,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "f5c3af6c-d45a-49e1-b100-06491b11723b",
+				"id": "ce7f7a87-0c3a-46e3-912c-421b45c731ee",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -40,7 +40,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "ab27d4db-bf89-4e06-b674-77e8e490bfc6",
+				"id": "ea0f1c86-d9fa-4c8c-ad87-89de5ce343ab",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -50,24 +50,34 @@
 	],
 	"variable": [
 		{
-			"id": "f783aa9a-4e74-4b47-b671-22c1893aef6d",
-			"key": "callbackurl",
+			"id": "3a6849d5-44d7-4e3b-ab3b-b70e6ce8db10",
+			"key": "CallbackURI",
 			"value": "https://localhost:3434/oauthcallback"
 		},
 		{
-			"id": "79a060f3-a998-48b2-990a-44a43d8bfff5",
-			"key": "clientid",
+			"id": "3d3191d9-e5a8-4313-ad86-978f131fe5b3",
+			"key": "ClientId",
 			"value": ""
 		},
 		{
-			"id": "f1be2ec7-a649-4139-964f-82613af0d327",
-			"key": "clientsecret",
+			"id": "4bec24ab-85b8-4808-ad64-802e336aa5e1",
+			"key": "ClientSecret",
 			"value": ""
 		},
 		{
-			"id": "cf70c4d9-5da6-427c-924c-14d675afffed",
+			"id": "d389502b-9374-4c4e-8f97-c19239ef7401",
 			"key": "oauth2scope",
 			"value": "core:*:*"
+		},
+		{
+			"id": "00ed6730-1fb9-4cd1-8439-854a339b092e",
+			"key": "AuthURL",
+			"value": "https://auth.brightspace.com/oauth2/auth"
+		},
+		{
+			"id": "2e8ab61a-422f-4534-ba23-52a5f29b6c86",
+			"key": "TokenURL",
+			"value": "https://auth.brightspace.com/core/connect/token"
 		}
 	],
 	"protocolProfileBehavior": {}
