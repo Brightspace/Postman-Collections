@@ -23,10 +23,10 @@ For this Collection your Brightspace user account will require the following Bri
   * Add Special Access
 
 ## OAuth 2.0 Scopes
-- ensure that your OAuth2.0 app, and access token, have the following OAuth Scopes granted:
-quizzing:quizzes:write
-dropbox:folders:write
-surveys:surveys:update
+Ensure that your OAuth2.0 app, and access token, have the following OAuth Scopes granted:
+* quizzing:quizzes:write
+* dropbox:folders:write
+* surveys:surveys:update
 
 ## Step 1 - Populate Collection Variables
 
@@ -42,6 +42,7 @@ Note: accesstoken and refreshtoken retrieval is explained in the "Get Initial To
 Note: the leversion variable is pre-set to 1.48 in this Collection.
 
 #### Define your Special Access Date Values
+
 Special Access rules vary slightly between Quizzes, Assignments and Surveys. The Brightspace API supports these variances. For simplicity, this Collection is setup to only support the setting of Due Date, Start Date, and End Date values (which are the most commonly used Special Access settings). Please modify the Collection to match your specific requirements.
 
 There are three variables in the Collection which you need to set:
