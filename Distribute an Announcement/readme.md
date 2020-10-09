@@ -9,7 +9,7 @@ For this Collection your Brightspace user account will require the following Bri
 - News
   - See News
   - Add/Edit/Delete News
-  - Change Display Author Information Setting
+  - *** Change Display Author Information Setting ***
 
 The API user must be enrolled in every Org Unit defined in the input file. This is most easily accomplished by having the API user's role to be "cascading".
 
@@ -42,6 +42,16 @@ There are two ways that you can populate these Collection Variables"
 
 1. Manually enter your data in the Current Value field for each variable. Note that sample values are provided in the Initial Value field for each variable.
 2. Pull the data from an existing News Item. Run the "Use an existing News Item as your Data Source" request. Prior to running this request you will need to update the OrgUnitId and NewsId Collection Variables to that of your source News Item.
+
+#### Start Date and End Date
+
+When creating a new Announcment note that a Start Date must be provided. However, an End Date is optional.
+
+To populate the StartDate variable to be the current time just uncomment the appropriate code in the Pre-Req script. The commented code also shows a way to set the EndDate variable to be 3 months from the current time.
+
+If you manually set the StartDate variable make sure to wrap the value in double-quotation marks. Also note that date values are UTC date values.
+
+If you do not want to set an End Date value then set the EndDate variable to null (no quotation marks).
 
 ## Step 3 - Modify the input.csv file
 
