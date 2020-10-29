@@ -117,8 +117,8 @@
 							"/////////////////////////////////////////////////////////////////////////////\r",
 							"//var moment = require('moment');\r",
 							"//const dateNow = new Date();\r",
-							"//pm.variables.set(\"StartDate\", dateNow.toISOString());\r",
-							"//pm.variables.set(\"EndDate\", moment(dateNow).add(3,'months').toISOString());\r",
+							"//pm.variables.set(\"StartDate\", '\"' + dateNow.toISOString() + '\"');\r",
+							"//pm.variables.set(\"EndDate\", '\"' + moment(dateNow).add(3,'months').toISOString()+ '\"');\r",
 							"/////////////////////////////////////////////////////////////////////////////\r",
 							"\r",
 							"// Retrieve the input data from the Iteration input CSV file\r",
@@ -187,8 +187,8 @@
 							"/////////////////////////////////////////////////////////////////////////////\r",
 							"//var moment = require('moment');\r",
 							"//const dateNow = new Date();\r",
-							"//pm.variables.set(\"StartDate\", dateNow.toISOString());\r",
-							"//pm.variables.set(\"EndDate\", moment(dateNow).add(3,'months').toISOString());\r",
+							"//pm.variables.set(\"StartDate\", '\"' + dateNow.toISOString() + '\"');\r",
+							"//pm.variables.set(\"EndDate\", '\"' + moment(dateNow).add(3,'months').toISOString()+ '\"');\r",
 							"/////////////////////////////////////////////////////////////////////////////\r",
 							"\r",
 							"// Retrieve the input data from the Iteration input CSV file\r",
@@ -286,52 +286,52 @@
 	],
 	"variable": [
 		{
-			"id": "7c3b7bc1-09d9-406a-b018-0537ee670870",
+			"id": "080fcab2-3e88-443d-a017-7122b2c3d36f",
 			"key": "accesstoken",
 			"value": ""
 		},
 		{
-			"id": "0519e314-0f95-497f-874a-90009775b7a4",
+			"id": "ced144c5-9791-4f68-88f1-719ce8eba76a",
 			"key": "BrightspaceDomain",
 			"value": "https://devcop.brightspace.com"
 		},
 		{
-			"id": "300c25a3-71d9-4928-8b1d-509706fea3e2",
+			"id": "a3279a2b-fdc0-4e64-91ff-090ccf1ed8f1",
 			"key": "leversion",
 			"value": "1.48"
 		},
 		{
-			"id": "3b0f67f6-cfc0-4898-9d80-fad2b6ba79c0",
+			"id": "8a73e364-92f9-4c1a-8447-6dba41d4d571",
 			"key": "OrgUnitId",
 			"value": ""
 		},
 		{
-			"id": "7d12f076-ac02-452f-a9d0-422bcef6677c",
+			"id": "41026e97-5125-4dbd-b7ef-f9ad75e772f7",
 			"key": "newsId",
 			"value": ""
 		},
 		{
-			"id": "4baf4461-4270-48fb-aca2-48736bfb46fa",
+			"id": "3f5fbec8-929f-4767-adca-56cc105c941b",
 			"key": "Title",
 			"value": "This is your announcement's title"
 		},
 		{
-			"id": "ca0d2ca6-9a17-4895-9c11-0c73b8f7248a",
+			"id": "82dae2aa-9e1d-4b96-995c-1d006616b57c",
 			"key": "BodyText",
 			"value": "This is the Body of the Announcement."
 		},
 		{
-			"id": "46fe12ef-d81c-459f-95f1-62787c390464",
+			"id": "29781307-e1a0-4cad-a34b-dbd427880274",
 			"key": "BodyHtml",
 			"value": "<p>This is the <strong>Body</strong> of the <a rel='noopener' href='https://github.com/Brightspace/Postman-Collections' target='_blank'>Announcement</a>.</p>"
 		},
 		{
-			"id": "3ed4317d-982b-4faa-85ff-3cd49feef454",
+			"id": "a9f255db-8279-467b-af0f-50c0934e240c",
 			"key": "StartDate",
 			"value": "\"2020-09-24T18:00:00.000Z\""
 		},
 		{
-			"id": "a413d44b-674a-4093-80d8-c7ca9aff9117",
+			"id": "0e16ca8f-4e63-4ad2-9eab-431d93639bf9",
 			"key": "EndDate",
 			"value": "null"
 		}
