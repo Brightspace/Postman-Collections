@@ -19,15 +19,6 @@ The purpose of this Collection is to provide a basic introduction on how to retr
 # Dive Deeper
 Once you have learned Brightspace API Authentication you can now start using all of the other collections in this repository.
 
-## Most Recent Updates
-
-Since September 2020's Fusion Extensibility Lab, we have launched 3 new Collections!
-1. LTI 1.1 - A reference Collection for all LTI 1.1 related API routes
-2. Distribute an Announcement - Provides a Runner guide for blasting a News Item out to many Courses
-3. Bulk Special Access - Provides a single bulk process to apply Special Access rules for Learners across multiple courses and Learning Activity Types.
-
-**All three new Collections were created based on Customer Requests in the Brightspace Community.**
-
 # More Information
 
 Brightspace API Documentation - https://docs.valence.desire2learn.com/
