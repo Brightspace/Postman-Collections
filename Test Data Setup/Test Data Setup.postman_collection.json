@@ -1,0 +1,2227 @@
+{
+	"info": {
+		"_postman_id": "0ee59611-00fa-494e-ae21-6787ef7a82f8",
+		"name": "Brightspace Test Data Setup",
+		"description": "# Brightspace Test Data Setup\r\n\r\nThis Postman Collection provides a series of Brightspace API Requests which create Brightspace data for the purpose of testing Brightspace features. This Collections focus is on testing for the Brightspace Work To Do Widget.\r\n\r\nThere is no one correct way to setup test data. This Collection is meant to provide a guide on how to setup Brightspace testing data in general. This Postman Collection performs the following tasks:\r\n- Creates two Learner User Accounts\r\n- Creates a Department, a Semester and a Course Template\r\n- Creates five Course Offerings\r\n- Enrolls the two Users into each of the Course Offerings\r\n- Creates Assignments, Quizzes, Discussions, Surveys, Content and Checklists in the Course Offerings\r\n  - Pre-Req code in these requests define a variety of Due Date and End Date values\r\n- Creates a series of Content Modules and Topics\r\n  - The last request creates a Content Topic which is a Quicklink to a Quiz that was previously created\r\n\r\n## Documentation\r\nhttps://docs.valence.desire2learn.com/\r\n\r\n## Permissions\r\nFor this Collection your Brightspace user account will require the following Brightspace Permission(s):\r\n- Assignments - Add/Edit Assignment Submission Folders\r\n- Checklist - Manage Checklists\r\n- Content - Manage Content\r\n- Content - Create and Edit Modules and Topics\r\n- Discussions - Manage Discussions\r\n- Discussions - Add Forums and Topics\r\n- Manage Courses - Create Courses Offerings and Templates\r\n- Org Unit Editor - Can Create and Edit Org Units\r\n- Org Unit Type Editor - Can Create and Edit Org Unit Types\r\n- Quizzes - Create Quizzes\r\n- Survey - Can Create Surveys\r\n- Users - Create a User in the Database\r\n- Users - Enroll '{The Learner Role that you will be using}'\r\n\r\n## OAuth 2.0 Scopes\r\nEnsure that your OAuth2.0 app, and access token, have the following OAuth Scopes granted:\r\n- core:*:*\r\n- checklists:checklist:write\r\n- content:topics:write\r\n- dropbox:folders:write\r\n- enrollment:orgunit:create\r\n- orgunits:course:create\r\n- orgunits:coursetemplate:create\r\n- quizzing:quizzes:read\r\n- quizzing:quizzes:create\r\n- surveys:surveys:read\r\n- surveys:surveys:create\r\n- role:detail:read\r\n- users:userdata:create\r\n\r\n## API Recipe\r\n\r\n#### Step 1 - Populate Collection Variables\r\n\r\nEdit this Collection, and update the Collection Variable values with appropriate values for your Brightspace site.\r\n\r\n- BrightspaceDomain\r\n- accesstoken\r\n- leversion\r\n- lpversion\r\n- learnerroleid - RoleId that will be used for creating users. You can use the provided Create Users --> Get Roles request to determine the list of roles available.\r\n\r\nPlace your values in the \"Current Value\" field of each Collection Variable.\r\n\r\nNote: accesstoken and refreshtoken retrieval is explained in the \"Get Initial Token\" and \"WhoAmI\" Collections.\r\n\r\nNote: the lpversion variable is pre-set to 1.30, and the leversion variable is pre-set to 1.51 in this Collection. These values can be automatically set by running the API Setup Calls --> Get Latest Version requests.\r\n\r\n## Step 2 - Perform the Postman Runner\r\n\r\n* Choose the \"Brightspace Test Data Setup\" Collection\r\n* In the \"Run Order\" section select the requests you want perfomed.\r\n* Click the \"Brightspace Test Data Setup\" button\r\n\r\n## Step 3 - Review the results\r\n\r\nThe Runner will execute each request in the Collection. The results of the Runner will inform you, per request, if the call was successful (green) or not (red). You can also view the Console (bottom of the Runner Results interface, to view console.log messages (e.g. the OrgDefinedId values for the Users that were created).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "API Setup Calls",
+			"item": [
+				{
+					"name": "Get Latest LP Version",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"lpversion\", jsonData.LatestVersion);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/versions/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"versions",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Latest LE Version",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"leversion\", jsonData.LatestVersion);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/le/versions/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"le",
+								"versions",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Create Users",
+			"item": [
+				{
+					"name": "Get Roles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/roles/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"roles",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Learner 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"Learner1UserId\", jsonData.UserId);\r",
+									"console.log(\"Learner1 created with UserId = \" + jsonData.UserId);\r",
+									"console.log(\"Learner1 created with OrgDefinedId = \" + jsonData.OrgDefinedId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrgDefinedId\": \"OrgDefinedId-{{$randomInt}}\",\r\n    \"FirstName\": \"{{$randomFirstName}}\",\r\n    \"MiddleName\": \"M\",\r\n    \"LastName\": \"{{$randomLastName}}\",\r\n    \"ExternalEmail\": \"{{$randomEmail}}\",\r\n    \"UserName\": \"d2l-{{$guid}}\",\r\n    \"RoleId\": {{learnerroleid}},\r\n    \"IsActive\": true,\r\n    \"SendCreationEmail\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/users/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Learner 2",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"Learner2UserId\", jsonData.UserId);\r",
+									"console.log(\"Learner2 created with UserId = \" + jsonData.UserId);\r",
+									"console.log(\"Learner1 created with OrgDefinedId = \" + jsonData.OrgDefinedId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrgDefinedId\": \"OrgDefinedId-{{$randomInt}}\",\r\n    \"FirstName\": \"{{$randomFirstName}}\",\r\n    \"MiddleName\": \"M\",\r\n    \"LastName\": \"{{$randomLastName}}\",\r\n    \"ExternalEmail\": \"{{$randomEmail}}\",\r\n    \"UserName\": \"d2l-{{$guid}}\",\r\n    \"RoleId\": {{learnerroleid}},\r\n    \"IsActive\": true,\r\n    \"SendCreationEmail\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/users/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Create Org Structure",
+			"item": [
+				{
+					"name": "Get Organization Org Unit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"OrgID\", jsonData.Identifier);\r",
+									"pm.collectionVariables.set(\"OrgName\", jsonData.Name);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/organization/info",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"organization",
+								"info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Org Unit Type Ids",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var OUTypes = [];\r",
+									"\r",
+									"// for each OU Type create a Postman Environment Variable\r",
+									"jsonData.forEach(function(value) {\r",
+									"    pm.collectionVariables.set(value.Code, value.Id);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/outypes/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"outypes",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create WTD Department",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"DeptOrgUnitId\", jsonData.Identifier);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Type\": {{Department}},\r\n    \"Name\": \"WTD Testing\",\r\n    \"Code\": \"Department-{{$guid}}\",\r\n    \"Parents\": [ {{OrgID}} ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/orgstructure/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"orgstructure",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create WTD Semester",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"SemOrgUnitId\", jsonData.Identifier);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Type\": {{Semester}},\r\n    \"Name\": \"WTD Semester\",\r\n    \"Code\": \"Semester-{{$guid}}\",\r\n    \"Parents\": [ {{OrgID}} ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/orgstructure/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"orgstructure",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create WTD Course Template",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"CTOrgUnitId\", jsonData.Identifier);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"WTD - Template\",\r\n    \"Code\": \"Template-{{$guid}}\",\r\n    \"Path\": \"\",\r\n    \"ParentOrgUnitIds\": [ {{DeptOrgUnitId}} ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/coursetemplates/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"coursetemplates",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Create Courses",
+			"item": [
+				{
+					"name": "Create Course 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"Course1Id\", jsonData.Identifier);\r",
+									"console.log(\"Course1 created with OrgUnitId = \" + jsonData.Identifier);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"Math\",\r\n    \"Code\": \"MathCourse-{{$guid}}\",\r\n    \"Path\": \"\",\r\n    \"CourseTemplateId\": {{CTOrgUnitId}},\r\n    \"SemesterId\": {{SemOrgUnitId}},\r\n    \"StartDate\": null,\r\n    \"EndDate\": null,\r\n    \"LocaleId\": null,\r\n    \"ForceLocale\": false,\r\n    \"ShowAddressBook\": false,\r\n    \"Description\": \r\n        {\r\n            \"Content\": \"WTD Testing - Math Course\",\r\n            \"Type\": \"Text\"\r\n        },\r\n    \"CanSelfRegister\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/courses/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"courses",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Course 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"Course2Id\", jsonData.Identifier);\r",
+									"console.log(\"Course1 created with OrgUnitId = \" + jsonData.Identifier);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"Science\",\r\n    \"Code\": \"ScienceCourse-{{$guid}}\",\r\n    \"Path\": \"\",\r\n    \"CourseTemplateId\": {{CTOrgUnitId}},\r\n    \"SemesterId\": {{SemOrgUnitId}},\r\n    \"StartDate\": null,\r\n    \"EndDate\": null,\r\n    \"LocaleId\": null,\r\n    \"ForceLocale\": false,\r\n    \"ShowAddressBook\": false,\r\n    \"Description\": \r\n        {\r\n            \"Content\": \"WTD Testing - Science Course\",\r\n            \"Type\": \"Text\"\r\n        },\r\n    \"CanSelfRegister\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/courses/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"courses",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Course 3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"Course3Id\", jsonData.Identifier);\r",
+									"console.log(\"Course1 created with OrgUnitId = \" + jsonData.Identifier);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"Music\",\r\n    \"Code\": \"MusicCourse-{{$guid}}\",\r\n    \"Path\": \"\",\r\n    \"CourseTemplateId\": {{CTOrgUnitId}},\r\n    \"SemesterId\": {{SemOrgUnitId}},\r\n    \"StartDate\": null,\r\n    \"EndDate\": null,\r\n    \"LocaleId\": null,\r\n    \"ForceLocale\": false,\r\n    \"ShowAddressBook\": false,\r\n    \"Description\": \r\n        {\r\n            \"Content\": \"WTD Testing - Music Course\",\r\n            \"Type\": \"Text\"\r\n        },\r\n    \"CanSelfRegister\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/courses/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"courses",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Course 4",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"Course4Id\", jsonData.Identifier);\r",
+									"console.log(\"Course1 created with OrgUnitId = \" + jsonData.Identifier);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"English\",\r\n    \"Code\": \"EnglishCourse-{{$guid}}\",\r\n    \"Path\": \"\",\r\n    \"CourseTemplateId\": {{CTOrgUnitId}},\r\n    \"SemesterId\": {{SemOrgUnitId}},\r\n    \"StartDate\": null,\r\n    \"EndDate\": null,\r\n    \"LocaleId\": null,\r\n    \"ForceLocale\": false,\r\n    \"ShowAddressBook\": false,\r\n    \"Description\": \r\n        {\r\n            \"Content\": \"WTD Testing - English Course\",\r\n            \"Type\": \"Text\"\r\n        },\r\n    \"CanSelfRegister\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/courses/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"courses",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Course 5",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"Course5Id\", jsonData.Identifier);\r",
+									"console.log(\"Course1 created with OrgUnitId = \" + jsonData.Identifier);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"French\",\r\n    \"Code\": \"FrenchCourse-{{$guid}}\",\r\n    \"Path\": \"\",\r\n    \"CourseTemplateId\": {{CTOrgUnitId}},\r\n    \"SemesterId\": {{SemOrgUnitId}},\r\n    \"StartDate\": null,\r\n    \"EndDate\": null,\r\n    \"LocaleId\": null,\r\n    \"ForceLocale\": false,\r\n    \"ShowAddressBook\": false,\r\n    \"Description\": \r\n        {\r\n            \"Content\": \"WTD Testing - French Course\",\r\n            \"Type\": \"Text\"\r\n        },\r\n    \"CanSelfRegister\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/courses/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"courses",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Enroll Learners in Courses",
+			"item": [
+				{
+					"name": "Enroll Learner 1 into Course 1",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrgUnitId\": {{Course1Id}},\r\n    \"UserId\": {{Learner1UserId}},\r\n    \"RoleId\": {{learnerroleid}}, \r\n    \"IsCascading\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/enrollments/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"enrollments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Enroll Learner 2 into Course 1",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrgUnitId\": {{Course1Id}},\r\n    \"UserId\": {{Learner2UserId}},\r\n    \"RoleId\": {{learnerroleid}}, \r\n    \"IsCascading\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/enrollments/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"enrollments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Enroll Learner 1 into Course 2",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrgUnitId\": {{Course2Id}},\r\n    \"UserId\": {{Learner1UserId}},\r\n    \"RoleId\": {{learnerroleid}}, \r\n    \"IsCascading\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/enrollments/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"enrollments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Enroll Learner 2 into Course 2",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrgUnitId\": {{Course2Id}},\r\n    \"UserId\": {{Learner2UserId}},\r\n    \"RoleId\": {{learnerroleid}}, \r\n    \"IsCascading\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/enrollments/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"enrollments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Enroll Learner 1 into Course 3",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrgUnitId\": {{Course3Id}},\r\n    \"UserId\": {{Learner1UserId}},\r\n    \"RoleId\": {{learnerroleid}}, \r\n    \"IsCascading\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/enrollments/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"enrollments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Enroll Learner 2 into Course 3",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrgUnitId\": {{Course3Id}},\r\n    \"UserId\": {{Learner2UserId}},\r\n    \"RoleId\": {{learnerroleid}}, \r\n    \"IsCascading\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/enrollments/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"enrollments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Enroll Learner 1 into Course 4",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrgUnitId\": {{Course4Id}},\r\n    \"UserId\": {{Learner1UserId}},\r\n    \"RoleId\": {{learnerroleid}}, \r\n    \"IsCascading\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/enrollments/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"enrollments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Enroll Learner 2 into Course 4",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrgUnitId\": {{Course4Id}},\r\n    \"UserId\": {{Learner2UserId}},\r\n    \"RoleId\": {{learnerroleid}}, \r\n    \"IsCascading\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/enrollments/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"enrollments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Enroll Learner 1 into Course 5",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrgUnitId\": {{Course5Id}},\r\n    \"UserId\": {{Learner1UserId}},\r\n    \"RoleId\": {{learnerroleid}}, \r\n    \"IsCascading\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/enrollments/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"enrollments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Enroll Learner 2 into Course 5",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OrgUnitId\": {{Course5Id}},\r\n    \"UserId\": {{Learner2UserId}},\r\n    \"RoleId\": {{learnerroleid}}, \r\n    \"IsCascading\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/lp/{{lpversion}}/enrollments/",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"lp",
+								"{{lpversion}}",
+								"enrollments",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Create Learning Activities",
+			"item": [
+				{
+					"name": "Assignments",
+					"item": [
+						{
+							"name": "Create Course 1 Assignment 1",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var moment = require('moment');\r",
+											"const dateNow = new Date();\r",
+											"postman.setEnvironmentVariable(\"startdate\", dateNow.toISOString());\r",
+											"postman.setEnvironmentVariable(\"duedate\", moment(dateNow).add(2,'months').toISOString());\r",
+											"postman.setEnvironmentVariable(\"enddate\", moment(dateNow).add(4,'months').toISOString());"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"CategoryId\": null,\r\n    \"Name\": \"Assignment 1\",\r\n    \"CustomInstructions\": {\r\n        \"Content\": \"<b>This</b> is a New Assignment\",\r\n        \"Type\": \"Html\"\r\n    },\r\n    \"Availability\": {\r\n        \"StartDate\": \"2020-07-29T13:57:00.000Z\",\r\n        \"EndDate\": \"2021-02-13T10:00:00.000Z\"\r\n    },\r\n    \"GroupTypeId\": null,\r\n    \"DueDate\": \"2020-12-20T10:00:00.000Z\",\r\n    \"DisplayInCalendar\": false,\r\n    \"NotificationEmail\": null,\r\n    \"IsHidden\": false,\r\n    \"Assessment\": {\r\n        \"ScoreDenominator\": 10.000000000\r\n    },\r\n    \"IsAnonymous\": false,\r\n    \"DropboxType\": 2,\r\n    \"SubmissionType\": 0,\r\n    \"CompletionType\": 0,\r\n    \"GradeItemId\": null,\r\n    \"AllowOnlyUsersWithSpecialAccess\": false\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course1Id}}/dropbox/folders/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course1Id}}",
+										"dropbox",
+										"folders",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Course 2 Assignment",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var moment = require('moment');\r",
+											"const dateNow = new Date();\r",
+											"postman.setEnvironmentVariable(\"startdate\", dateNow.toISOString());\r",
+											"postman.setEnvironmentVariable(\"duedate\", moment(dateNow).add(2,'months').toISOString());\r",
+											"postman.setEnvironmentVariable(\"enddate\", moment(dateNow).add(4,'months').toISOString());"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"CategoryId\": null,\r\n    \"Name\": \"Assignment - Due Date in 2 months from now\",\r\n    \"CustomInstructions\": {\r\n        \"Content\": \"<b>This</b> is a New Assignment\",\r\n        \"Type\": \"Html\"\r\n    },\r\n    \"Availability\": {\r\n        \"StartDate\": \"{{startdate}}\",\r\n        \"EndDate\": \"{{enddate}}\"\r\n    },\r\n    \"GroupTypeId\": null,\r\n    \"DueDate\": \"{{duedate}}\",\r\n    \"DisplayInCalendar\": false,\r\n    \"NotificationEmail\": null,\r\n    \"IsHidden\": false,\r\n    \"Assessment\": {\r\n        \"ScoreDenominator\": 10.000000000\r\n    },\r\n    \"IsAnonymous\": false,\r\n    \"DropboxType\": 2,\r\n    \"SubmissionType\": 0,\r\n    \"CompletionType\": 0,\r\n    \"GradeItemId\": null,\r\n    \"AllowOnlyUsersWithSpecialAccess\": false\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course2Id}}/dropbox/folders/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course2Id}}",
+										"dropbox",
+										"folders",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Course 3 Assignment w  Due Date = Today +2 Days",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var moment = require('moment');\r",
+											"const dateNow = new Date();\r",
+											"postman.setEnvironmentVariable(\"startdate\", dateNow.toISOString());\r",
+											"postman.setEnvironmentVariable(\"duedate\", moment(dateNow).add(2,'days').toISOString());\r",
+											"postman.setEnvironmentVariable(\"enddate\", moment(dateNow).add(2,'months').toISOString());"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"CategoryId\": null,\r\n    \"Name\": \"Assignment - Due Date in 2 Days from now\",\r\n    \"CustomInstructions\": {\r\n        \"Content\": \"<b>This</b> is a New Assignment\",\r\n        \"Type\": \"Html\"\r\n    },\r\n    \"Availability\": {\r\n        \"StartDate\": \"{{startdate}}\",\r\n        \"EndDate\": \"{{enddate}}\"\r\n    },\r\n    \"GroupTypeId\": null,\r\n    \"DueDate\": \"{{duedate}}\",\r\n    \"DisplayInCalendar\": false,\r\n    \"NotificationEmail\": null,\r\n    \"IsHidden\": false,\r\n    \"Assessment\": {\r\n        \"ScoreDenominator\": 10.000000000\r\n    },\r\n    \"IsAnonymous\": false,\r\n    \"DropboxType\": 2,\r\n    \"SubmissionType\": 0,\r\n    \"CompletionType\": 0,\r\n    \"GradeItemId\": null,\r\n    \"AllowOnlyUsersWithSpecialAccess\": false\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course3Id}}/dropbox/folders/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course3Id}}",
+										"dropbox",
+										"folders",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Course 3 Assignment w  Due Date = Today +14 Days Copy",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var moment = require('moment');\r",
+											"const dateNow = new Date();\r",
+											"postman.setEnvironmentVariable(\"startdate\", dateNow.toISOString());\r",
+											"postman.setEnvironmentVariable(\"duedate\", moment(dateNow).add(14,'days').toISOString());\r",
+											"postman.setEnvironmentVariable(\"enddate\", moment(dateNow).add(2,'months').toISOString());"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"CategoryId\": null,\r\n    \"Name\": \"Assignment - Due Date in 14 Days from now\",\r\n    \"CustomInstructions\": {\r\n        \"Content\": \"<b>This</b> is a New Assignment\",\r\n        \"Type\": \"Html\"\r\n    },\r\n    \"Availability\": {\r\n        \"StartDate\": \"{{startdate}}\",\r\n        \"EndDate\": \"{{enddate}}\"\r\n    },\r\n    \"GroupTypeId\": null,\r\n    \"DueDate\": \"{{duedate}}\",\r\n    \"DisplayInCalendar\": false,\r\n    \"NotificationEmail\": null,\r\n    \"IsHidden\": false,\r\n    \"Assessment\": {\r\n        \"ScoreDenominator\": 10.000000000\r\n    },\r\n    \"IsAnonymous\": false,\r\n    \"DropboxType\": 2,\r\n    \"SubmissionType\": 0,\r\n    \"CompletionType\": 0,\r\n    \"GradeItemId\": null,\r\n    \"AllowOnlyUsersWithSpecialAccess\": false\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course3Id}}/dropbox/folders/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course3Id}}",
+										"dropbox",
+										"folders",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Course 4 Assignment w  Due Date  +2 and End Date +3",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var moment = require('moment');\r",
+											"const dateNow = new Date();\r",
+											"postman.setEnvironmentVariable(\"startdate\", dateNow.toISOString());\r",
+											"postman.setEnvironmentVariable(\"duedate\", moment(dateNow).add(2,'days').toISOString());\r",
+											"postman.setEnvironmentVariable(\"enddate\", moment(dateNow).add(3,'days').toISOString());"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"CategoryId\": null,\r\n    \"Name\": \"Assignment - Due Date in 2 Days\",\r\n    \"CustomInstructions\": {\r\n        \"Content\": \"End Date is in 3 Days!\",\r\n        \"Type\": \"Text\"\r\n    },\r\n    \"Availability\": {\r\n        \"StartDate\": \"{{startdate}}\",\r\n        \"EndDate\": \"{{enddate}}\"\r\n    },\r\n    \"GroupTypeId\": null,\r\n    \"DueDate\": \"{{duedate}}\",\r\n    \"DisplayInCalendar\": false,\r\n    \"NotificationEmail\": null,\r\n    \"IsHidden\": false,\r\n    \"Assessment\": {\r\n        \"ScoreDenominator\": 10.000000000\r\n    },\r\n    \"IsAnonymous\": false,\r\n    \"DropboxType\": 2,\r\n    \"SubmissionType\": 0,\r\n    \"CompletionType\": 0,\r\n    \"GradeItemId\": null,\r\n    \"AllowOnlyUsersWithSpecialAccess\": false\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course4Id}}/dropbox/folders/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course4Id}}",
+										"dropbox",
+										"folders",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Quizzes",
+					"item": [
+						{
+							"name": "Create a Quiz Due 60 Days from Now",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var moment = require('moment');\r",
+											"const dateNow = new Date();\r",
+											"pm.variables.set(\"startdate\", dateNow.toISOString());\r",
+											"pm.variables.set(\"duedate\", moment(dateNow).add(60,'days').toISOString());\r",
+											"pm.variables.set(\"enddate\", moment(dateNow).add(4,'months').toISOString());"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\": \"Quiz - Due Date in 60 Days\",\r\n    \"IsActive\": true,\r\n    \"SortOrder\": 2,\r\n    \"AutoExportToGrades\": false,\r\n    \"GradeItemId\": null,\r\n    \"IsAutoSetGraded\": false,\r\n    \"Instructions\":{\r\n        \"Text\": {\r\n\t\t\t\"Content\": \"{{$randomLoremSentences}}\",\r\n\t\t\t\"Type\": \"Text\"\r\n\t\t},\r\n        \"IsDisplayed\": true\r\n    },\r\n    \"Description\":{\r\n        \"Text\": {\r\n\t\t\t\"Content\": \"{{$randomLoremParagraph}}\",\r\n\t\t\t\"Type\": \"Text\"\r\n\t\t},\r\n        \"IsDisplayed\": true\r\n    },\r\n    \"StartDate\": \"{{startdate}}\",\r\n    \"EndDate\": \"{{enddate}}\",\r\n    \"DueDate\": \"{{duedate}}\",\r\n    \"DisplayInCalendar\": true,\r\n    \"SubmissionTimeLimit\": {\r\n\t\t\"IsEnforced\": true,\r\n\t\t\"ShowClock\": true,\r\n\t\t\"TimeLimitValue\": 299\r\n\t},\r\n\t\"SubmissionGracePeriod\": 2,\r\n\t\"LateSubmissionInfo\": {\r\n\t\t\"LateSubmissionOption\": 2,\r\n\t\t\"LateLimitMinutes\": 1\r\n\t},\r\n\t\"NumberOfAttemptsAllowed\": null,\r\n\t\"Password\": null,\r\n\t\"Header\": {\r\n        \"Text\": {\r\n\t\t\t\"Content\": \"{{$randomLoremSentences}}\",\r\n\t\t\t\"Type\": \"Text\"\r\n\t\t},\r\n        \"IsDisplayed\": true\r\n    },\r\n\t\"Footer\": {\r\n        \"Text\": {\r\n\t\t\t\"Content\": \"Footer\",\r\n\t\t\t\"Type\": \"Html\"\r\n\t\t},\r\n        \"IsDisplayed\": true\r\n    },\t\r\n\t\"AllowHints\": false,\r\n\t\"DisableRightClick\": true,\r\n\t\"DisablePagerAndAlerts\": true,\r\n\t\"NotificationEmail\": \"{{$randomEmail}}\",\r\n\t\"CalcTypeId\": 4,\r\n\t\"RestrictIPAddressRange\": null,\r\n\t\"CategoryId\": null,\r\n\t\"PreventMovingBackwards\" : false,\r\n\t\"Shuffle\" : true,\r\n\t\"AllowOnlyUsersWithSpecialAccess\" : false,\r\n    \"IsRetakeIncorrectOnly\": false\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course4Id}}/quizzes/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course4Id}}",
+										"quizzes",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create a Quiz Due 5 Days Ago",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var moment = require('moment');\r",
+											"const dateNow = new Date();\r",
+											"pm.variables.set(\"startdate\", moment(dateNow).subtract(25,'days').toISOString());\r",
+											"pm.variables.set(\"duedate\", moment(dateNow).subtract(5,'days').toISOString());\r",
+											"pm.variables.set(\"enddate\", moment(dateNow).add(4,'months').toISOString());"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\": \"Quiz - Due Date was 5 days ago!\",\r\n    \"IsActive\": true,\r\n    \"SortOrder\": 2,\r\n    \"AutoExportToGrades\": false,\r\n    \"GradeItemId\": null,\r\n    \"IsAutoSetGraded\": false,\r\n    \"Instructions\":{\r\n        \"Text\": {\r\n\t\t\t\"Content\": \"{{$randomLoremSentences}}\",\r\n\t\t\t\"Type\": \"Text\"\r\n\t\t},\r\n        \"IsDisplayed\": true\r\n    },\r\n    \"Description\":{\r\n        \"Text\": {\r\n\t\t\t\"Content\": \"{{$randomLoremParagraph}}\",\r\n\t\t\t\"Type\": \"Text\"\r\n\t\t},\r\n        \"IsDisplayed\": true\r\n    },\r\n    \"StartDate\": \"{{startdate}}\",\r\n    \"EndDate\": \"{{enddate}}\",\r\n    \"DueDate\": \"{{duedate}}\",\r\n    \"DisplayInCalendar\": true,\r\n    \"SubmissionTimeLimit\": {\r\n\t\t\"IsEnforced\": true,\r\n\t\t\"ShowClock\": true,\r\n\t\t\"TimeLimitValue\": 299\r\n\t},\r\n\t\"SubmissionGracePeriod\": 2,\r\n\t\"LateSubmissionInfo\": {\r\n\t\t\"LateSubmissionOption\": 2,\r\n\t\t\"LateLimitMinutes\": 1\r\n\t},\r\n\t\"NumberOfAttemptsAllowed\": null,\r\n\t\"Password\": null,\r\n\t\"Header\": {\r\n        \"Text\": {\r\n\t\t\t\"Content\": \"{{$randomLoremSentences}}\",\r\n\t\t\t\"Type\": \"Text\"\r\n\t\t},\r\n        \"IsDisplayed\": true\r\n    },\r\n\t\"Footer\": {\r\n        \"Text\": {\r\n\t\t\t\"Content\": \"Footer\",\r\n\t\t\t\"Type\": \"Html\"\r\n\t\t},\r\n        \"IsDisplayed\": true\r\n    },\t\r\n\t\"AllowHints\": false,\r\n\t\"DisableRightClick\": true,\r\n\t\"DisablePagerAndAlerts\": true,\r\n\t\"NotificationEmail\": \"{{$randomEmail}}\",\r\n\t\"CalcTypeId\": 4,\r\n\t\"RestrictIPAddressRange\": null,\r\n\t\"CategoryId\": null,\r\n\t\"PreventMovingBackwards\" : false,\r\n\t\"Shuffle\" : true,\r\n\t\"AllowOnlyUsersWithSpecialAccess\" : false,\r\n    \"IsRetakeIncorrectOnly\": false\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course5Id}}/quizzes/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course5Id}}",
+										"quizzes",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create a Quiz Due +2 with NO END DATE",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var moment = require('moment');\r",
+											"const dateNow = new Date();\r",
+											"pm.variables.set(\"startdate\", moment(dateNow).subtract(1,'days').toISOString());\r",
+											"pm.variables.set(\"duedate\", moment(dateNow).add(5,'days').toISOString());\r",
+											"//pm.variables.set(\"enddate\", moment(dateNow).add(4,'months').toISOString());"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsonData = pm.response.json();\r",
+											"pm.collectionVariables.set(\"quizid\", jsonData.QuizId);\r",
+											"pm.collectionVariables.set(\"quizActivityId\", jsonData.ActivityId);\r",
+											"\r",
+											"var ActivityId = jsonData.ActivityId;\r",
+											"var QuizGuid = ActivityId.substr(44,42);\r",
+											"\r",
+											"var QuickLinkURL = \"/d2l/common/dialogs/quickLink/quickLink.d2l?ou=\";\r",
+											"QuickLinkURL += pm.environment.get(\"Course1Id\");\r",
+											"QuickLinkURL += \"&type=quiz&rcode=\";\r",
+											"QuickLinkURL += QuizGuid;\r",
+											"\r",
+											"pm.collectionVariables.set(\"QuizQuickLinkURL\", QuickLinkURL);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\": \"Quiz - No End Date\",\r\n    \"IsActive\": true,\r\n    \"SortOrder\": 2,\r\n    \"AutoExportToGrades\": false,\r\n    \"GradeItemId\": null,\r\n    \"IsAutoSetGraded\": false,\r\n    \"Instructions\":{\r\n        \"Text\": {\r\n\t\t\t\"Content\": \"{{$randomLoremSentences}}\",\r\n\t\t\t\"Type\": \"Text\"\r\n\t\t},\r\n        \"IsDisplayed\": true\r\n    },\r\n    \"Description\":{\r\n        \"Text\": {\r\n\t\t\t\"Content\": \"{{$randomLoremParagraph}}\",\r\n\t\t\t\"Type\": \"Text\"\r\n\t\t},\r\n        \"IsDisplayed\": true\r\n    },\r\n    \"StartDate\": \"{{startdate}}\",\r\n    \"EndDate\": null,\r\n    \"DueDate\": \"{{duedate}}\",\r\n    \"DisplayInCalendar\": true,\r\n    \"SubmissionTimeLimit\": {\r\n\t\t\"IsEnforced\": true,\r\n\t\t\"ShowClock\": true,\r\n\t\t\"TimeLimitValue\": 299\r\n\t},\r\n\t\"SubmissionGracePeriod\": 2,\r\n\t\"LateSubmissionInfo\": {\r\n\t\t\"LateSubmissionOption\": 2,\r\n\t\t\"LateLimitMinutes\": 1\r\n\t},\r\n\t\"NumberOfAttemptsAllowed\": null,\r\n\t\"Password\": null,\r\n\t\"Header\": {\r\n        \"Text\": {\r\n\t\t\t\"Content\": \"{{$randomLoremSentences}}\",\r\n\t\t\t\"Type\": \"Text\"\r\n\t\t},\r\n        \"IsDisplayed\": true\r\n    },\r\n\t\"Footer\": {\r\n        \"Text\": {\r\n\t\t\t\"Content\": \"Footer\",\r\n\t\t\t\"Type\": \"Html\"\r\n\t\t},\r\n        \"IsDisplayed\": true\r\n    },\t\r\n\t\"AllowHints\": false,\r\n\t\"DisableRightClick\": true,\r\n\t\"DisablePagerAndAlerts\": true,\r\n\t\"NotificationEmail\": \"{{$randomEmail}}\",\r\n\t\"CalcTypeId\": 4,\r\n\t\"RestrictIPAddressRange\": null,\r\n\t\"CategoryId\": null,\r\n\t\"PreventMovingBackwards\" : false,\r\n\t\"Shuffle\" : true,\r\n\t\"AllowOnlyUsersWithSpecialAccess\" : false,\r\n    \"IsRetakeIncorrectOnly\": false\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course1Id}}/quizzes/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course1Id}}",
+										"quizzes",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Discussions",
+					"item": [
+						{
+							"name": "Create a Discussion Forum End Date +2",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var moment = require('moment');\r",
+											"const dateNow = new Date();\r",
+											"pm.variables.set(\"startdate\", dateNow.toISOString());\r",
+											"//pm.variables.set(\"duedate\", moment(dateNow).add(60,'days').toISOString());\r",
+											"pm.variables.set(\"enddate\", moment(dateNow).add(2,'days').toISOString());"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\": \"Forum with End Date +2\",\r\n    \"Description\": {\r\n\t    \"Text\": \"{{$randomLoremSentences}}\",\r\n\t    \"Html\": \"<p>{{$randomLoremSentences}}</p>\"\r\n\t},\r\n    \"ShowDescriptionInTopics\": true,\r\n    \"StartDate\": \"{{startdate}}\",\r\n    \"EndDate\": \"{{enddate}}\",\r\n    \"PostStartDate\": \"{{startdate}}\",\r\n    \"PostEndDate\": \"{{enddate}}\",\r\n    \"AllowAnonymous\": false,\r\n    \"IsLocked\": false,\r\n    \"IsHidden\": false,\r\n    \"RequiresApproval\": false,\r\n    \"MustPostToParticipate\": false,\r\n    \"DisplayInCalendar\": true,\r\n    \"DisplayPostDatesInCalendar\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course1Id}}/discussions/forums/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course1Id}}",
+										"discussions",
+										"forums",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create a Discussion Forum End Date -5",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var moment = require('moment');\r",
+											"const dateNow = new Date();\r",
+											"//pm.variables.set(\"startdate\", dateNow.toISOString());\r",
+											"pm.variables.set(\"startdate\", moment(dateNow).subtract(56,'days').toISOString());\r",
+											"//pm.variables.set(\"duedate\", moment(dateNow).add(60,'days').toISOString());\r",
+											"pm.variables.set(\"enddate\", moment(dateNow).subtract(5,'days').toISOString());"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\": \"Forum with End Date -5\",\r\n    \"Description\": {\r\n\t    \"Text\": \"{{$randomLoremSentences}}\",\r\n\t    \"Html\": \"<p>{{$randomLoremSentences}}</p>\"\r\n\t},\r\n    \"ShowDescriptionInTopics\": true,\r\n    \"StartDate\": \"{{startdate}}\",\r\n    \"EndDate\": \"{{enddate}}\",\r\n    \"PostStartDate\": \"{{startdate}}\",\r\n    \"PostEndDate\": \"{{enddate}}\",\r\n    \"AllowAnonymous\": false,\r\n    \"IsLocked\": false,\r\n    \"IsHidden\": false,\r\n    \"RequiresApproval\": false,\r\n    \"MustPostToParticipate\": false,\r\n    \"DisplayInCalendar\": true,\r\n    \"DisplayPostDatesInCalendar\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course1Id}}/discussions/forums/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course1Id}}",
+										"discussions",
+										"forums",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Surveys",
+					"item": [
+						{
+							"name": "Create a Survey EndDate +5",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var moment = require('moment');\r",
+											"const dateNow = new Date();\r",
+											"pm.variables.set(\"startdate\", dateNow.toISOString());\r",
+											"pm.variables.set(\"enddate\", moment(dateNow).add(5,'days').toISOString());"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\": \"Survey - End Date in 5 Days\",\r\n    \"HasInstantFeedback\": 1,\r\n    \"IsAnonymous\": true,\r\n    \"Description\": {\r\n        \"Text\":  {\r\n\t\t\t\"Content\": \"{{$randomLoremSentences}}\",\r\n\t\t\t\"Type\": \"Html\"\r\n\t\t},\r\n        \"IsDisplayed\": true\r\n    },\r\n    \"Submission\": {\r\n\t\t\"Content\": \"{{$randomLoremSentences}}\",\r\n\t\t\"Type\": \"Text\"\r\n\t},\r\n    \"Footer\": {\r\n        \"Text\":  {\r\n\t\t\t\"Content\": \"{{$randomLoremSentences}}\",\r\n\t\t\t\"Type\": \"Html\"\r\n\t\t},\r\n        \"IsDisplayed\": true\r\n    },\r\n    \"IsActive\": false,\r\n    \"StartDate\": \"{{startdate}}\",\r\n    \"EndDate\": \"{{enddate}}\",\r\n    \"DisplayInCalendar\": false,\r\n    \"UserResponses\": {\r\n        \"AttemptsAllowedTypeId\": 0,\r\n        \"NumberOfAttempts\": null\r\n    },\r\n    \"CategoryId\": null,\r\n\t\"PreventMovingBackwards\" : true,\r\n\t\"Shuffle\" : true,\r\n    \"AllowOnlyUsersWithSpecialAccess\" : true\r\n}\r\n\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course2Id}}/surveys/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course2Id}}",
+										"surveys",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Checklists",
+					"item": [
+						{
+							"name": "Create a Checklist",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsondata = pm.response.json();\r",
+											"let checklistid = jsondata.ChecklistId;\r",
+											"pm.collectionVariables.set(\"checklistid\", checklistid);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"Name\": \"Here is your Checklist\",\r\n   \"Description\": {\r\n\t   \"Content\": \"{{$randomLoremSentences}}\",\r\n\t   \"Type\": \"Text\"\r\n\t}\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course2Id}}/checklists/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course2Id}}",
+										"checklists",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create a Checklist Category",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let jsondata = pm.response.json();\r",
+											"let categoryid = jsondata.CategoryId;\r",
+											"pm.collectionVariables.set(\"categoryid\", categoryid);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"Name\": \"Checklist Category\",\r\n   \"Description\":  {\r\n\t   \"Content\": \"{{$randomLoremSentences}}\",\r\n\t   \"Type\": \"Text\"\r\n    },\r\n   \"SortOrder\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course2Id}}/checklists/{{checklistid}}/categories/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course2Id}}",
+										"checklists",
+										"{{checklistid}}",
+										"categories",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create a Checklist Item DueDate +5",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var moment = require('moment');\r",
+											"const dateNow = new Date();\r",
+											"//pm.variables.set(\"startdate\", dateNow.toISOString());\r",
+											"pm.variables.set(\"duedate\", moment(dateNow).add(2,'days').toISOString());\r",
+											"//pm.variables.set(\"enddate\", moment(dateNow).add(4,'months').toISOString());"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"CategoryId\": {{categoryid}},\r\n   \"Name\": \"Checklist Item Due Date +2\",\r\n   \"Description\": {\r\n\t   \"Content\": \"{{$randomLoremSentences}}\",\r\n\t   \"Type\": \"Text\"\r\n\t},\r\n   \"SortOrder\": 1,\r\n   \"DueDate\": \"{{duedate}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course2Id}}/checklists/{{checklistid}}/items/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course2Id}}",
+										"checklists",
+										"{{checklistid}}",
+										"items",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create a Checklist Item DueDate -5 Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var moment = require('moment');\r",
+											"const dateNow = new Date();\r",
+											"//pm.variables.set(\"startdate\", dateNow.toISOString());\r",
+											"pm.variables.set(\"duedate\", moment(dateNow).subtract(5,'days').toISOString());\r",
+											"//pm.variables.set(\"enddate\", moment(dateNow).add(4,'months').toISOString());"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"CategoryId\": {{categoryid}},\r\n   \"Name\": \"Checklist Item Due Date -5\",\r\n   \"Description\": {\r\n\t   \"Content\": \"{{$randomLoremSentences}}\",\r\n\t   \"Type\": \"Text\"\r\n\t},\r\n   \"SortOrder\": 1,\r\n   \"DueDate\": \"{{duedate}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course2Id}}/checklists/{{checklistid}}/items/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course2Id}}",
+										"checklists",
+										"{{checklistid}}",
+										"items",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Content",
+					"item": [
+						{
+							"name": "Create a Root Content Module with an End Date and a Due Date",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var moment = require('moment');\r",
+											"const dateNow = new Date();\r",
+											"pm.variables.set(\"startdate\", dateNow.toISOString());\r",
+											"pm.variables.set(\"duedate\", moment(dateNow).add(60,'days').toISOString());\r",
+											"pm.variables.set(\"enddate\", moment(dateNow).add(4,'months').toISOString());"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);\r",
+											"postman.setEnvironmentVariable(\"Module1Id\", jsonData.Id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Title\": \"New Root Content Module - with End and Due Dates\",\r\n    \"ShortTitle\": \"New Root Content Module - with End and Due Dates\",\r\n    \"Type\": 0,\r\n    \"ModuleStartDate\": \"{{startdate}}\",\r\n    \"ModuleEndDate\": \"{{enddate}}\",\r\n    \"ModuleDueDate\": \"{{duedate}}\",\r\n    \"IsHidden\": false,\r\n    \"IsLocked\": false,\r\n    \"Description\": null\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course1Id}}/content/root/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course1Id}}",
+										"content",
+										"root",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add a Topic with No Dates to Module 1",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Title\": \"Content Topic - with No Dates\",\r\n    \"ShortTitle\": \"Content Topic - with No Dates\",\r\n    \"Type\": 1,\r\n    \"TopicType\": 3,\r\n    \"Url\": \"https://www.d2l.com\",\r\n    \"StartDate\": null,\r\n    \"EndDate\": null,\r\n    \"DueDate\": null,\r\n    \"IsHidden\": false,\r\n    \"IsLocked\": false,\r\n    \"OpenAsExternalResource\": true,\r\n    \"Description\": {\r\n        \"Text\": \"External Link to d2l\",\r\n        \"Html\": \"<p>External Link to d2l</p>\"\r\n    },\r\n    \"MajorUpdate\": null,\r\n    \"MajorUpdateText\": \"\",\r\n    \"ResetCompletionTracking\": null,\r\n    \"Duration\": null\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course1Id}}/content/modules/{{Module1Id}}/structure/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course1Id}}",
+										"content",
+										"modules",
+										"{{Module1Id}}",
+										"structure",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create a Root Content Module with no Date Values",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);\r",
+											"postman.setEnvironmentVariable(\"Module2Id\", jsonData.Id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Title\": \"New Root Content Module - No Dates\",\r\n    \"ShortTitle\": \"New Root Content Module - No Dates\",\r\n    \"Type\": 0,\r\n    \"ModuleStartDate\": null,\r\n    \"ModuleEndDate\": null,\r\n    \"ModuleDueDate\": null,\r\n    \"IsHidden\": false,\r\n    \"IsLocked\": false,\r\n    \"Description\": null\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course1Id}}/content/root/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course1Id}}",
+										"content",
+										"root",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add a Topic with Dates to Module 2",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var moment = require('moment');\r",
+											"const dateNow = new Date();\r",
+											"pm.variables.set(\"startdate\", dateNow.toISOString());\r",
+											"pm.variables.set(\"duedate\", moment(dateNow).add(60,'days').toISOString());\r",
+											"pm.variables.set(\"enddate\", moment(dateNow).add(4,'months').toISOString());"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Title\": \"Content Topic - Dates\",\r\n    \"ShortTitle\": \"Content Topic - Dates\",\r\n    \"Type\": 1,\r\n    \"TopicType\": 3,\r\n    \"Url\": \"https://www.d2l.com\",\r\n    \"StartDate\": \"{{startdate}}\",\r\n    \"EndDate\": \"{{enddate}}\",\r\n    \"DueDate\": \"{{duedate}}\",\r\n    \"IsHidden\": false,\r\n    \"IsLocked\": false,\r\n    \"OpenAsExternalResource\": true,\r\n    \"Description\": {\r\n        \"Text\": \"External Link to d2l\",\r\n        \"Html\": \"<p>External Link to d2l</p>\"\r\n    },\r\n    \"MajorUpdate\": null,\r\n    \"MajorUpdateText\": \"\",\r\n    \"ResetCompletionTracking\": null,\r\n    \"Duration\": null\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course1Id}}/content/modules/{{Module2Id}}/structure/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course1Id}}",
+										"content",
+										"modules",
+										"{{Module2Id}}",
+										"structure",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create a Root Content Module only with a Due Date",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var moment = require('moment');\r",
+											"const dateNow = new Date();\r",
+											"pm.variables.set(\"duedate\", moment(dateNow).add(20,'days').toISOString());"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);\r",
+											"postman.setEnvironmentVariable(\"Module3Id\", jsonData.Id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Title\": \"New Root Content Module - only with a Due Date\",\r\n    \"ShortTitle\": \"New Root Content Module - only with a Due Date\",\r\n    \"Type\": 0,\r\n    \"ModuleStartDate\": null,\r\n    \"ModuleEndDate\": null,\r\n    \"ModuleDueDate\": \"{{duedate}}\",\r\n    \"IsHidden\": false,\r\n    \"IsLocked\": false,\r\n    \"Description\": null\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course1Id}}/content/root/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course1Id}}",
+										"content",
+										"root",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add a Topic with Dates to Module 3",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var moment = require('moment');\r",
+											"const dateNow = new Date();\r",
+											"pm.variables.set(\"startdate\", dateNow.toISOString());\r",
+											"pm.variables.set(\"duedate\", moment(dateNow).add(10,'days').toISOString());\r",
+											"pm.variables.set(\"enddate\", moment(dateNow).add(20,'days').toISOString());"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Title\": \"Content Topic - Dates\",\r\n    \"ShortTitle\": \"Content Topic - Dates\",\r\n    \"Type\": 1,\r\n    \"TopicType\": 3,\r\n    \"Url\": \"https://www.d2l.com\",\r\n    \"StartDate\": \"{{startdate}}\",\r\n    \"EndDate\": \"{{enddate}}\",\r\n    \"DueDate\": \"{{duedate}}\",\r\n    \"IsHidden\": false,\r\n    \"IsLocked\": false,\r\n    \"OpenAsExternalResource\": true,\r\n    \"Description\": {\r\n        \"Text\": \"External Link to d2l\",\r\n        \"Html\": \"<p>External Link to d2l</p>\"\r\n    },\r\n    \"MajorUpdate\": null,\r\n    \"MajorUpdateText\": \"\",\r\n    \"ResetCompletionTracking\": null,\r\n    \"Duration\": null\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course1Id}}/content/modules/{{Module3Id}}/structure/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course1Id}}",
+										"content",
+										"modules",
+										"{{Module3Id}}",
+										"structure",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add a Topic that is a Link to a Quiz",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Title\": \"Content Topic - Link to a Quiz\",\r\n    \"ShortTitle\": \"Content Topic - Quiz\",\r\n    \"Type\": 1,\r\n    \"TopicType\": 3,\r\n    \"Url\": \"{{QuizQuickLinkURL}}\",\r\n    \"StartDate\": null,\r\n    \"EndDate\": null,\r\n    \"DueDate\": null,\r\n    \"IsHidden\": false,\r\n    \"IsLocked\": false,\r\n    \"OpenAsExternalResource\": true,\r\n    \"Description\": {\r\n        \"Text\": \"Quicklink to a Quiz\",\r\n        \"Html\": \"<p>Quicklink to a Quiz</p>\"\r\n    },\r\n    \"MajorUpdate\": null,\r\n    \"MajorUpdateText\": \"\",\r\n    \"ResetCompletionTracking\": null,\r\n    \"Duration\": null\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{Course1Id}}/content/modules/{{Module1Id}}/structure/",
+									"host": [
+										"{{BrightspaceDomain}}"
+									],
+									"path": [
+										"d2l",
+										"api",
+										"le",
+										"{{leversion}}",
+										"{{Course1Id}}",
+										"content",
+										"modules",
+										"{{Module1Id}}",
+										"structure",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accesstoken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Status code is 200\", function () {",
+					"    pm.expect(pm.response.code).to.be.oneOf([201,200]);",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BrightspaceDomain",
+			"value": "https://devcop.brightspace.com"
+		},
+		{
+			"key": "accesstoken",
+			"value": ""
+		},
+		{
+			"key": "leversion",
+			"value": "1.51"
+		},
+		{
+			"key": "lpversion",
+			"value": "1.30"
+		},
+		{
+			"key": "learnerroleid",
+			"value": ""
+		},
+		{
+			"key": "Learner1UserId",
+			"value": ""
+		},
+		{
+			"key": "Learner2UserId",
+			"value": ""
+		},
+		{
+			"key": "OrgID",
+			"value": ""
+		},
+		{
+			"key": "OrgName",
+			"value": ""
+		},
+		{
+			"key": "Course Offering",
+			"value": ""
+		},
+		{
+			"key": "Course Template",
+			"value": ""
+		},
+		{
+			"key": "Department",
+			"value": ""
+		},
+		{
+			"key": "Group",
+			"value": ""
+		},
+		{
+			"key": "Program",
+			"value": ""
+		},
+		{
+			"key": "Semester",
+			"value": ""
+		},
+		{
+			"key": "DeptOrgUnitId",
+			"value": ""
+		},
+		{
+			"key": "SemOrgUnitId",
+			"value": ""
+		},
+		{
+			"key": "CTOrgUnitId",
+			"value": ""
+		},
+		{
+			"key": "Course1Id",
+			"value": ""
+		},
+		{
+			"key": "Course2Id",
+			"value": ""
+		},
+		{
+			"key": "Course3Id",
+			"value": ""
+		},
+		{
+			"key": "Course4Id",
+			"value": ""
+		},
+		{
+			"key": "Course5Id",
+			"value": ""
+		},
+		{
+			"key": "quizActivityId",
+			"value": ""
+		},
+		{
+			"key": "quizid",
+			"value": ""
+		},
+		{
+			"key": "QuizQuickLinkURL",
+			"value": ""
+		},
+		{
+			"key": "checklistid",
+			"value": ""
+		},
+		{
+			"key": "categoryid",
+			"value": ""
+		}
+	]
+}
