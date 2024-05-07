@@ -23,7 +23,7 @@ Once you have learned Brightspace API Authentication you can now start using all
 
 Brightspace API Documentation - https://docs.valence.desire2learn.com/
 
-Brightspace Community Developer Group - https://community.brightspace.com/s/group/0F9610000001mZ1CAI/developers
+Brightspace Community Developer Group - https://community.d2l.com/brightspace/group/29-developers
 
 # Participate
 
