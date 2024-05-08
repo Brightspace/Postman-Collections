@@ -1,5 +1,5 @@
 # Postman-Collections
-A listing of Postman Collections for the Brightspace API
+A listing of Postman Collections for the Brightspace API.
 
 # Start here!
 If you are new to the Brightspace API then we recommend you start with these two collections as they **walk you through the Brightspace API OAuth 2.0 Authentication process**:
