@@ -1,0 +1,385 @@
+{
+	"info": {
+		"_postman_id": "b0c8f68f-65bb-4333-8174-d608a24062a3",
+		"name": "Brightspace Extensions",
+		"description": "This postman collection will allow for devs to easily/quickly verify Brightspace Extensions APIs logic is as expected!\n\n**Instructions**\n\n1. Create a token for the instance you are looking to the instance you are working on, and add it in the \"Authorization\" tab\n2. In Variables ensure the \"BrigthspaceDomain\" variable is set to the instance you are working on (NOT INCLUDING TRAILING SLASH)\n3. Ensure you saved the changes in the \"Authorization\" and \"Variables\" tabs\n4. Click Run",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31590280"
+	},
+	"item": [
+		{
+			"name": "Brigthspace CRUD",
+			"item": [
+				{
+					"name": "Get All Extensions Start",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"ExtensionNumber\", jsonData.length);\r",
+									"\r",
+									"pm.test(\"Response should have 200 Code\", function() {pm.response.to.have.status(200);})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/BrightspaceExtensions/extensions",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"BrightspaceExtensions",
+								"extensions"
+							]
+						},
+						"description": "Gets the initial number of extensions for the instance."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Extension 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"Extension1\", jsonData);\r",
+									"\r",
+									"pm.test(\"Response should have 200 Code\", function() {pm.response.to.have.status(200);})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"bob\",\r\n    \"IsLocal\": true,\r\n    \"ShortDescription\": \"bob1\",\r\n    \"State\": 0,\r\n    \"Website\": \"bob\",\r\n    \"Email\": \"bob@bob\",\r\n    \"SupportSite\": \"bob.com\",\r\n    \"CreatedDate\": \"2024-05-08T13:51:59.117Z\",\r\n    \"CreatedBy\": 9,\r\n    \"LastUpdatedDate\": \"2024-05-08T13:51:59.117Z\",\r\n    \"LastUpdatedBy\": 9,\r\n    \"LastPublishedDate\": null,\r\n    \"LastPublishedBy\": \"9\",\r\n    \"Tags\": \"b\",\r\n    \"Categories\": \"bobFTW\",\r\n    \"ToDTO\": {\r\n        \"ExtensionId\": 1,\r\n        \"GlobalId\": \"26708233-87ab-4cf2-bf2f-e6f4f8aee2b1\",\r\n        \"Name\": \"bob\",\r\n        \"IsLocal\": true,\r\n        \"ShortDescription\": \"bob1\",\r\n        \"State\": 0,\r\n        \"Website\": \"bob\",\r\n        \"Email\": \"bob@bob\",\r\n        \"SupportSite\": \"bob.com\",\r\n        \"CreatedDate\": \"2024-05-08T13:51:59.117Z\",\r\n        \"CreatedBy\": 9,\r\n        \"LastUpdatedDate\": \"2024-05-08T13:51:59.117Z\",\r\n        \"LastUpdatedBy\": 9,\r\n        \"LastPublishedDate\": null,\r\n        \"LastPublishedBy\": \"9\",\r\n        \"Tags\": \"b\",\r\n        \"Categories\": \"bobFTW\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/BrightspaceExtensions/extensions",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"BrightspaceExtensions",
+								"extensions"
+							]
+						},
+						"description": "Creates a new extension (Extension 1)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Extension 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.collectionVariables.set(\"Extension2\", jsonData);\r",
+									"\r",
+									"pm.test(\"Response should have 200 Code\", function() {pm.response.to.have.status(200);})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"GlobalId\": null,\r\n    \"Name\": \"sally\",\r\n    \"IsLocal\": true,\r\n    \"ShortDescription\": \"bob1\",\r\n    \"State\": 0,\r\n    \"Website\": \"bob\",\r\n    \"Email\": \"bob@bob\",\r\n    \"SupportSite\": \"bob.com\",\r\n    \"CreatedDate\": \"2024-05-08T13:51:59.117Z\",\r\n    \"CreatedBy\": 9,\r\n    \"LastUpdatedDate\": \"2024-05-08T13:51:59.117Z\",\r\n    \"LastUpdatedBy\": 9,\r\n    \"LastPublishedDate\": null,\r\n    \"LastPublishedBy\": \"9\",\r\n    \"Tags\": \"b\",\r\n    \"Categories\": \"bobFTW\",\r\n    \"ToDTO\": {\r\n        \"ExtensionId\": 1,\r\n        \"GlobalId\": \"26708233-87ab-4cf2-bf2f-e6f4f8aee2b1\",\r\n        \"Name\": \"bob\",\r\n        \"IsLocal\": true,\r\n        \"ShortDescription\": \"bob1\",\r\n        \"State\": 0,\r\n        \"Website\": \"bob\",\r\n        \"Email\": \"bob@bob\",\r\n        \"SupportSite\": \"bob.com\",\r\n        \"CreatedDate\": \"2024-05-08T13:51:59.117Z\",\r\n        \"CreatedBy\": 9,\r\n        \"LastUpdatedDate\": \"2024-05-08T13:51:59.117Z\",\r\n        \"LastUpdatedBy\": 9,\r\n        \"LastPublishedDate\": null,\r\n        \"LastPublishedBy\": \"9\",\r\n        \"Tags\": \"b\",\r\n        \"Categories\": \"bobFTW\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/BrightspaceExtensions/extensions",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"BrightspaceExtensions",
+								"extensions"
+							]
+						},
+						"description": "Create another new extension (Extension 2)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Extension 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response should have 200 Code\", function() {pm.response.to.have.status(200);})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ExtensionId\": {{Extension1}},\r\n    \"GlobalId\": null,\r\n    \"Name\": \"THIS HAS BEEN CHANGED\",\r\n    \"IsLocal\": true,\r\n    \"ShortDescription\": \"bob1\",\r\n    \"State\": 0,\r\n    \"Website\": \"bob\",\r\n    \"Email\": \"bob@bob\",\r\n    \"SupportSite\": \"bob.com\",\r\n    \"CreatedDate\": \"2024-05-08T13:51:59.117Z\",\r\n    \"CreatedBy\": 9,\r\n    \"LastUpdatedDate\": \"2024-05-08T13:51:59.117Z\",\r\n    \"LastUpdatedBy\": 9,\r\n    \"LastPublishedDate\": null,\r\n    \"LastPublishedBy\": \"9\",\r\n    \"Tags\": \"b\",\r\n    \"Categories\": \"bobFTW\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/BrightspaceExtensions/extensions/{{Extension1}}",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"BrightspaceExtensions",
+								"extensions",
+								"{{Extension1}}"
+							]
+						},
+						"description": "Update Extension 1's Name"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Extension 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"pm.test(\"Checking that extension one's name has been changed\", function() { jsonData.Name == \"THIS HAS BEEN CHANGED\" })\r",
+									"\r",
+									"pm.test(\"Response should have 200 Code\", function() {pm.response.to.have.status(200);})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/BrightspaceExtensions/extensions/{{Extension1}}",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"BrightspaceExtensions",
+								"extensions",
+								"{{Extension1}}"
+							]
+						},
+						"description": "Ensure Extension 1's name has changed as expected"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Extensions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"var initialExtnesionCount = pm.collectionVariables.get(\"ExtensionNumber\");\r",
+									"pm.test(\"Checking that extension one's name has been changed\", function() { jsonData.length == initialExtnesionCount+2 })\r",
+									"pm.test(\"Response should have 200 Code\", function() {pm.response.to.have.status(200);})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/BrightspaceExtensions/extensions",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"BrightspaceExtensions",
+								"extensions"
+							]
+						},
+						"description": "Checks we only made 2 users during these postman calls (usuing initial extension count)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Extension 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response should have 200 Code\", function() {pm.response.to.have.status(200);})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/BrightspaceExtensions/extensions/{{Extension1}}",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"BrightspaceExtensions",
+								"extensions",
+								"{{Extension1}}"
+							]
+						},
+						"description": "Clean up Extension 1"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Extension 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response should have 200 Code\", function() {pm.response.to.have.status(200);})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BrightspaceDomain}}/d2l/api/BrightspaceExtensions/extensions/{{Extension2}}",
+							"host": [
+								"{{BrightspaceDomain}}"
+							],
+							"path": [
+								"d2l",
+								"api",
+								"BrightspaceExtensions",
+								"extensions",
+								"{{Extension2}}"
+							]
+						},
+						"description": "Clean up Extension 2"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjE3ODk2ODE5LWFmN2UtNGE5ZC04YmVlLWY2ZWU1ZWU2MGNmOSIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE3MTUzNjg5NzMsImV4cCI6MTcxNTM3MTk3MywiaXNzIjoiaHR0cHM6Ly9hcGkuYnJpZ2h0c3BhY2UuY29tL2F1dGgiLCJhdWQiOiJodHRwczovL2FwaS5icmlnaHRzcGFjZS5jb20vYXV0aC90b2tlbiIsInRlbmFudGlkIjoiNTY5ODZmNTctM2NhZi00Mjc0LThiMDQtZDI3YmU2Mjk5NTUyIiwiYXpwIjoiRXhwYW5kb0NsaWVudCIsInNjb3BlIjoiKjoqOioiLCJqdGkiOiI0ODg3NzgxNS0zZmY2LTRlMjktYWVhYy05MGY5ZTYyMjMwZmQifQ.RM-wTrcowQKvnBsi1rXaLtCKp6C6Kty9uUGig-lpX2S9aC_Vx7MbLmRgMxI1dSEJXuJ16IX7sqvk6pOQ2Z3xi8PqD4gqPBrlO1XhacEyN2tMJTAwb_Kj7GqDZiPF9KU5lVf2yT3gy-pnY2pPXlDrnV-CNJl-OfT1nO0SdUwtEwUVVZeiCakYvmRqCnXimT_G4FNsiLgg2_DFvmbG4xWyiAUkC-AgG4dSLoWFGNYcjV8Hrbeh1yaPrX0J_LgiWGvyb8rZRy6FzCHRN9ucGltCStwIduSk7ZORYHXti2Q-16838e4RNMsxdAMcdM35cXlx9tfMeyUmKRYmSjs1LEf6dQ",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BrightspaceDomain",
+			"value": "https://nexusdev.devlms.brightspace.com",
+			"type": "string"
+		},
+		{
+			"key": "Extension1",
+			"value": "0",
+			"type": "string"
+		},
+		{
+			"key": "Extension2",
+			"value": "0",
+			"type": "string"
+		},
+		{
+			"key": "ExtensionsNumbers",
+			"value": "0",
+			"type": "string"
+		},
+		{
+			"key": "ExtensionNumber",
+			"value": ""
+		}
+	]
+}
