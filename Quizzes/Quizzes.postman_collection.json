@@ -284,33 +284,6 @@
 				}
 			},
 			"response": []
-		},
-		{
-			"name": "Get all of the Answers for a Quiz Attempt",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BrightspaceDomain}}/d2l/api/le/{{leversion}}/{{courseid}}/quizzes/{{quizid}}/attempts/{{attemptid}}/answers/",
-					"host": [
-						"{{BrightspaceDomain}}"
-					],
-					"path": [
-						"d2l",
-						"api",
-						"le",
-						"{{leversion}}",
-						"{{courseid}}",
-						"quizzes",
-						"{{quizid}}",
-						"attempts",
-						"{{attemptid}}",
-						"answers",
-						""
-					]
-				}
-			},
-			"response": []
 		}
 	],
 	"auth": {

@@ -45,6 +45,3 @@ Note that the terms "Access" and "Special Access" are not refering to the same B
 – Give selected learners a different due, start, and/or end date for the quiz.
 – Assign special time limits, grace periods, or attempts allowed for the quiz.
 
-## GET Answers Route is only available upon request
-
-At the time this Collection is published please note that the "Get all of the Answers for a Quiz Attempt" route is only available to D2L customers upon request. Please contact the Developer Group within the Brightspace Developer Community to request access to this API route. We do plan to make this route generally available, but we don't yet have a specific timeframe for when this will occur.
